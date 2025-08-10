@@ -9,7 +9,8 @@
     <input v-model="password" type="password" required />
 
     <button type="submit">登入</button>
-
+    <el-button @click="onLogin" type="primary">登入</el-button>
+<!-- <el-button type="primary">主要按鈕</el-button> -->
     <p v-if="error" class="error">{{ error }}</p>
   </form>
 </template>
