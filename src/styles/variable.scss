@@ -1,0 +1,84 @@
+$color-skin: #fd7d14b7;
+$color-low: #fd7d143b;
+$font: #6b6b6b;
+$border: #ccc;
+
+$color-order-new: #ff96b9;
+$color-order-handle: #85d15f;
+$color-order-finish: #a19bff;
+$color-light: #fca55e;
+
+:root {
+
+  --color-order-new: #{$color-order-new};
+  --color-order-handle: #{$color-order-handle};
+  --color-order-finish: #{$color-order-finish};
+
+  --el-color-primary-rgb:#fd7e14;
+  --el-color-primary:#fd7e14;
+  --el-color-primary-light-3:#fc8f36;
+  --el-color-primary-light-5:#fca55e;
+  --el-color-primary-light-7:#ffb980;
+  --el-color-primary-light-8:#ffd7b6;
+  --el-color-primary-light-9:#fce2cc;
+  --el-color-primary-dark-2:#e27924;
+}
+$color-high: #ff4800;
+$color: #fd7e14;
+$color-light-3: #fc8f36;
+$color-light-5: #fca55e;
+$color-light-7: #ffb980;
+$color-light-8: #ffd7b6;
+$color-light-9: #fce2cc;
+$color-dark-2: #e27924;
+
+
+
+// 左侧logo高度
+$base-menu-logo-height: 50px;
+
+// 左侧logo文字大小
+$base-logo-title-fontSize: 20px;
+
+$base-menu-width: 200px;
+
+
+
+div {
+
+  caret-color: transparent;
+}
+
+input {
+  caret-color: rgb(0, 0, 0);
+
+}
+
+.change {
+  color: $color;
+  cursor: pointer;
+  outline: none;
+  caret-color: transparent;
+  // caret-color: none;
+}
+
+
+.change:hover {
+  color: black;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  color: #fd7e14;
+}
+
+
+
+.border {
+  border: 1px solid #dad8d8;
+}
+
+.border:hover {
+  border: 1px solid $color;
+}

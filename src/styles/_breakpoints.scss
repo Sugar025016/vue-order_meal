@@ -1,0 +1,38 @@
+// ===============================
+// 響應式斷點變數（依專案需求可調整）
+// ===============================
+$breakpoint-xxl: 1600px; // 超大桌機
+$breakpoint-xl: 1440px;  // 大桌機
+$breakpoint-lg: 1200px;  // 筆電
+$breakpoint-md: 992px;   // 平板橫向
+$breakpoint-sm: 768px;   // 平板直向 / 手機橫向
+$breakpoint-xs: 576px;   // 大手機
+$breakpoint-xxs: 375px;  // 小手機
+
+// ===============================
+// 響應式 Mixin
+// 用法：@include respond(md) { ... }
+// ===============================
+@mixin respond($breakpoint) {
+  @if $breakpoint == xxl {
+    @media (max-width: $breakpoint-xxl) { @content; }
+  }
+  @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+  @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  }
+  @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  }
+  @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  }
+  @else if $breakpoint == xs {
+    @media (max-width: $breakpoint-xs) { @content; }
+  }
+  @else if $breakpoint == xxs {
+    @media (max-width: $breakpoint-xxs) { @content; }
+  }
+}

@@ -1,0 +1,28 @@
+.el-form {
+    .el-form-item {
+        font-size: 30px;
+
+        :deep(.el-form-item__label) {
+            font-size: 18px;
+            margin: 0 0 5px 10px;
+            color: #000;
+        }
+
+        :deep(.el-input__wrapper) {
+            border-radius: 20px !important;
+        }
+
+        :deep(.el-input__inner) {
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        :deep(.el-form-item__error) {
+
+            margin: 0 0 0 10px;
+        }
+    }
+}
+
+
+

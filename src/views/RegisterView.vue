@@ -1,13 +1,13 @@
 <template>
   <div class="login-view">
     <AuthTitle class="login-view_auth-title" />
-    <AuthLoginForm class="login-view_auth-login-form" />
+    <AuthRegisterMemberForm class="login-view_auth-login-form" />
   </div>
 </template>
 
 <script setup>
 import AuthTitle from "@/components/auth/AuthTitle.vue";
-import AuthLoginForm from "@/components/auth/AuthLoginForm.vue";
+import AuthRegisterMemberForm from "@/components/auth/AuthRegisterMemberForm.vue";
 </script>
 
 <style lang="scss" scoped>

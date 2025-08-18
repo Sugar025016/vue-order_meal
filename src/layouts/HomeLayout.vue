@@ -1,5 +1,8 @@
 <template>
   <div class="auth-layout">
+        <div class="auth-layout_router-view">
+      <Header />
+    </div>
     <div class="auth-layout_router-view">
       <router-view />
     </div>
@@ -9,6 +12,7 @@
 
 <script setup>
 import Footer from "@/components/footer/Footer.vue";
+import Header from "@/components/footer/Footer.vue";
 </script>
 <style lang="scss" scoped>
 .auth-layout {
