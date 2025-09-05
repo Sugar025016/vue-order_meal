@@ -6,7 +6,7 @@
         <BreadCrumb />
       </div>
       <div class="toolbar_middle" v-if="true && true">
-        <!-- <OrderBar /> -->
+        <OrderBar />
       </div>
       <div class="toolbar_right" >
         <LoginRegisterBar v-if="false"/>
@@ -25,7 +25,7 @@ import BreadCrumb from "./breadcrumb/index.vue";
 import LoginRegisterBar from "./loginRegisterBar/index.vue";
 
 import UserBar from  "@/components/Toolbar/src/userBar/index.vue";
-// import OrderBar from  "@/components/Toolbar/src/OrderBar/index.vue";
+import OrderBar from  "@/components/Toolbar/src/order/index.vue";
 // import OrderSetting from './orderSetting/index.vue'
 // import Order from './order/index.vue'
 // import { onMounted } from 'vue'
@@ -36,10 +36,8 @@ defineProps(["scene"]);
 .el-header {
   background-color: #ffffff;
   height: 80px;
-  box-shadow: 3px 3px 5px #dbdbdb, -3px -3px 5px #e2e2e2;
-  // box-shadow: 0px 8px 15px #dbdbdb;
-  z-index: 10
-  ;
+  box-shadow: 3px 3px 5px #ffffff94, -3px -3px 5px #ffffffaf;
+  z-index: 10;
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -47,7 +45,6 @@ defineProps(["scene"]);
     .toolbar_left {
       display: flex;
       align-items: center;
-      // margin-left: 10px;
       height: 100%;
     }
     .toolbar_right {
@@ -56,22 +53,6 @@ defineProps(["scene"]);
       height: 100%;
     }
 
-    @media (max-width: $breakpoint-md) {
-      padding: 0;
-
-      display: flex;
-      justify-content: space-between;
-      .toolbar_left {
-        margin-right: auto;
-      }
-      .toolbar_right {
-        margin-right: 10px;
-      }
-    }
-
-    @media (max-width: $breakpoint-xs) {
-      padding: 0;
-    }
   }
 }
 </style>

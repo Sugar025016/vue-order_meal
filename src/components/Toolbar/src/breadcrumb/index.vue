@@ -123,7 +123,7 @@ const changeIcon = () => {
     font-size: auto;
     white-space: nowrap;
     @media (max-width: $breakpoint-xs) {
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 600;
     }
   }
@@ -133,9 +133,9 @@ const changeIcon = () => {
   font-size: 35px;
   font-weight: 700;
 
-  @media (max-width: $breakpoint-xs) {
-    margin: 0 0 0 10px;
-  }
+  // @media (max-width: $breakpoint-xs) {
+  //   // margin: 0 0 0 10px;
+  // }
 }
 
 .el-button.is-text {

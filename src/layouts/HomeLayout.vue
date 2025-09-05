@@ -10,7 +10,7 @@
 
 <script setup>
 import Footer from "@/components/footer/Footer.vue";
-import Header from "@/components/TabBar/src/index.vue";
+import Header from "@/components/Toolbar/src/index.vue";
 </script>
 <style lang="scss" scoped>
 .home-layout {
