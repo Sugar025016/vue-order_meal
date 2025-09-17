@@ -1,26 +1,20 @@
 <template>
-  <el-breadcrumb separator="/" :separator-icon="ArrowRight">
+  <div class="footer-top-title">
     <router-link :to="{ path: '/BuyShops' }">
-      <!-- <span class="title">{{ title }}</span> -->
-      <span class="title">餓餓定便當</span>
+      <span class="footer-top-title__title">餓餓定便當</span>
     </router-link>
-  </el-breadcrumb>
+  </div>
 </template>
 <script setup lang="ts">
-import { ArrowRight } from '@element-plus/icons-vue'
-// import useLayOutSettingStore from '@/store/modules/setting'
-// let LayOutSettingStore = useLayOutSettingStore()
-// const changeIcon = () => {
-//   LayOutSettingStore.isCollapse = !LayOutSettingStore.isCollapse
-// }
-let title = document.title
+
+let title = document.title;
 </script>
 
 <style lang="scss" scoped>
 a {
   text-decoration: none;
 }
-.title {
+.footer-top-title__title {
   vertical-align: middle;
   font-size: 30px;
   color: $color;

@@ -36,10 +36,11 @@
 .fooder-top-icon {
   display: flex;
   align-items: center;
+  flex-wrap:wrap;
   gap: 30px;
   @include respond(xs) {
     display: flex;
-    flex-direction: column; // 每個區塊垂直排列
+    // flex-direction: column; // 每個區塊垂直排列
     margin-right: 10px;
   }
   .fooder-top-icon__a {

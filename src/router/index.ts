@@ -4,6 +4,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import HomeLayout from '@/layouts/HomeLayout.vue'
 import HomeView from '@/views/HomeView.vue'
+import ShopView from '@/views/ShopView.vue'
 
 const routes = [
   {
@@ -19,6 +20,7 @@ const routes = [
     component: HomeLayout,
     children: [
       { path: '/', name: 'Home', component: HomeView },
+      { path: '/shop', name: 'shop', component: ShopView },
     ],
   },
 ]

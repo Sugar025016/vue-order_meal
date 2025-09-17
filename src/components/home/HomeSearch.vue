@@ -65,7 +65,11 @@
         />
         <el-button @click="search" type="primary">搜尋</el-button>
       </div>
-      <div class="home-search__history" v-if="showHistory" @mouseleave="showHistory = false">
+      <div
+        class="home-search__history"
+        v-if="showHistory"
+        @mouseleave="showHistory = false"
+      >
         <div class="home-search__history-title">Search History:</div>
         <ul>
           <li
@@ -191,6 +195,10 @@ function fillInput(history: string) {
         background: url("@/assets/icons/expand.png") no-repeat;
         background-size: 20px;
         background-position: right 10px center;
+        .option:hover {
+          background-color: $color;
+          color: $color-light-9;
+        }
       }
 
       .home-search__custom-select:hover {

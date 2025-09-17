@@ -22,6 +22,8 @@ $color-light: #fca55e;
   --el-color-primary-light-8:#ffd7b6;
   --el-color-primary-light-9:#fce2cc;
   --el-color-primary-dark-2:#e27924;
+
+  --responsive-padding: clamp(10px, calc(5vw - 10px), 60px);
 }
 $color-high: #ff4800;
 $color: #fd7e14;

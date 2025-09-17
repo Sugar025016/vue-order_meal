@@ -2,19 +2,15 @@
   <div class="home-view">
     <HomeImage @registerShop="registerShop" />
     <div class="home-view__body">
-      <RwdLayout>
-        <template #slotName>
-          <div class="home-view__body-in">
-            <HomeSearch />
-            <div class="home-view__shop">
-              <template v-for="c1 in shopStore.shopArr">
-                <ShopCard :shop="c1" :isFavoriteShop="false"/>
-              </template>
-            </div>
-            <div v-if="loading" class="loading" v-loading="loading"></div>
-          </div>
-        </template>
-      </RwdLayout>
+      <div class="home-view__body-in">
+        <HomeSearch />
+        <div class="home-view__shop">
+          <template v-for="c1 in shopStore.shopArr">
+            <ShopCard :shop="c1" :isFavoriteShop="false" />
+          </template>
+        </div>
+        <div v-if="loading" class="loading" v-loading="loading"></div>
+      </div>
     </div>
   </div>
 
@@ -43,13 +39,13 @@ const isExpanded = ref(false);
 //   logo: string;
 // }
 interface ShopData {
-  id: number
-  name: string
-  address: string
-  description: string
-  imgUrl?: string
-  orderable: boolean
-  isFavoriteShop:boolean
+  id: number;
+  name: string;
+  address: string;
+  description: string;
+  imgUrl?: string;
+  orderable: boolean;
+  isFavoriteShop: boolean;
 }
 
 const shopStore = reactive({
@@ -108,6 +104,7 @@ onBeforeUnmount(() => {
   background-color: rgba(255, 234, 184, 0.769);
   .home-view__body {
     .home-view__body-in {
+      padding: var(--responsive-padding);
       .home-view__shop {
         display: grid; /* 使用CSS Grid布局 */
         grid-template-columns: repeat(1, 1fr);

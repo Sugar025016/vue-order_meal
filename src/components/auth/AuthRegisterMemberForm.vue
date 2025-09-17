@@ -1,6 +1,6 @@
 <template>
-  <div class="register-member">
-    <span class="table-title">註冊帳號</span>
+  <div class="auth-register-member-rorm">
+    <span class="auth-register-member-rorm__title">註冊帳號</span>
     <el-form ref="formRef" label-width="auto" label-position="top">
       <el-form-item prop="name" label="名稱：" size="large">
         <el-input
@@ -97,13 +97,20 @@ const registerMember = ref<RegisterMember>({
 
 <style lang="scss" scoped>
 @use "@/styles/form.scss" as form;
-.register-member {
+.auth-register-member-rorm {
   display: flex;
   // align-items:center;
   justify-content: center;
   flex-direction: column;
   margin-bottom: 20px;
-  .table-title {
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+
+  @include respond(md) {
+    padding: 20px;
+  }
+  .auth-register-member-rorm__title {
     margin: 20px auto;
     vertical-align: middle;
     font-size: 36px;

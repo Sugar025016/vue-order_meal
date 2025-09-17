@@ -7,12 +7,13 @@ import {
   ShoppingBag,
   Document,
 } from "@element-plus/icons-vue";
+import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
 let $router = useRouter();
 let $route = useRoute();
 let sellOrderModalOpen = ref(false);
 let memberModelOpen = ref(false);
 
-// const chooseAddressRef = ref<typeof ChooseAddressModel>()
+const chooseAddressRef = ref<typeof ChooseAddressModel>();
 
 const path = window.location.hash;
 // $router.getRoutes()
@@ -32,7 +33,7 @@ const changeLink = async (to: string) => {
 type Orders = any[]; // 🔹假型別（你有定義可以替換掉）
 let orderNew = ref<Orders>([]);
 const chooseAddressOpen = async () => {
-  // chooseAddressRef.value?.open();
+  chooseAddressRef.value?.open();
 };
 
 const userStore = ref({
@@ -48,7 +49,7 @@ const userStore = ref({
       <el-icon class="icon" v-if="userStore.username"
         ><UserIcon class="svg-icon"
       /></el-icon>
-      <el-dropdown v-if="userStore.username" >
+      <el-dropdown v-if="userStore.username" style="cursor: pointer">
         <span class="el-dropdown-link">
           {{ userStore.username }}
           <el-icon class="el-icon--right">
@@ -101,7 +102,7 @@ const userStore = ref({
   ></SellOrderModal> -->
   <!-- <MemberModel v-model:memberModelOpen="memberModelOpen"></MemberModel> -->
 
-  <!-- <ChooseAddressModel ref="chooseAddressRef"></ChooseAddressModel> -->
+  <ChooseAddressModel ref="chooseAddressRef"></ChooseAddressModel>
 </template>
 
 <style lang="scss" scoped>

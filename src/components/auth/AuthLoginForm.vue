@@ -1,6 +1,6 @@
 <template>
-  <div class="login_container">
-    <el-card class="login_form">
+  <div class="auth-login-form">
+    <el-card class="auth-login-form__card">
       <h3>會員登入</h3>
 
       <el-form label-position="top" ref="loginForms">
@@ -41,7 +41,7 @@
         </el-form-item>
       </el-form>
       <el-form-item>
-        <el-button class="login_btn" type="primary" size="default" round>
+        <el-button class="auth-login-form__login-btn" type="primary" size="default" round>
           登入
         </el-button>
         <!-- <el-button type="primary" round>Primary</el-button> -->
@@ -76,7 +76,7 @@ const loginForm = reactive({
 <style lang="scss" scoped>
 @use "@/styles/form.scss" as form;
 
-.login_container {
+.auth-login-form {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,22 +90,11 @@ const loginForm = reactive({
     border-radius: 40px;
     width: 100%;
   }
-  .login_form {
+  .auth-login-form__card {
     position: relative;
     padding: 10px;
     background: transparent;
     width: 100%;
-
-    h1 {
-      background: $color;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 40px;
-      text-align: center;
-      font-weight: 700;
-      margin-bottom: 40px;
-      margin-top: -10px;
-    }
 
     h3 {
       font-size: 36px;
@@ -115,7 +104,7 @@ const loginForm = reactive({
       margin-top: -10px;
       color: rgb(87, 87, 87);
     }
-    .login_btn {
+    .auth-login-form__login-btn {
       width: 100%;
     }
     button {
@@ -130,7 +119,6 @@ const loginForm = reactive({
         width: 100%;
         text-decoration: none;
         color: $color;
-
         margin: 1px;
       }
     }
@@ -146,7 +134,5 @@ const loginForm = reactive({
 .el-card {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
-:deep(.el-input-group__append, .el-input-group__prepend) {
-  padding: 0;
-}
+
 </style>

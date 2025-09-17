@@ -1,6 +1,6 @@
 <template>
   <div class="home-layout">
-      <Header />
+    <Header />
     <div class="home-layout_router-view">
       <router-view />
     </div>
@@ -17,9 +17,17 @@ import Header from "@/components/Toolbar/src/index.vue";
   min-height: 100vh; /* 最小高度佔滿整個視窗 */
   display: flex;
   flex-direction: column;
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%; /* 滿版寬度 */
+    z-index: 1000; /* 確保壓在最上層 */
+  }
   .home-layout_router-view {
     display: flex;
     flex: 1; /* 主內容填滿剩餘空間 */
+    margin-top: 80px;
   }
 }
 </style>

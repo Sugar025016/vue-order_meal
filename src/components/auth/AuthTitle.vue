@@ -1,10 +1,10 @@
 <template>
-  <div class="auth-image">
-    <div class="title">
+  <div class="auth-title">
+    <div class="auth-title__title">
       <!-- <def-title></def-title> -->
       <span>餓餓定便當</span>
     </div>
-    <div class="img">
+    <div class="auth-title__img">
       <img
         v-if="$route.path == '/Register/shop'"
         src="@/assets/images/openShop3.png"
@@ -26,17 +26,16 @@ let $route = useRoute();
 $route.path;
 </script>
 <style lang="scss" scoped>
-.auth-image {
+.auth-title {
   display: flex;
   justify-content: center;
   flex-direction: column;
   // 子元件各佔一半左右
-    @include respond(md) {
-      
-      display: none; // 隱藏圖片
-      flex: none;
-    }
-  .title {
+  @include respond(md) {
+    display: none; // 隱藏圖片
+    flex: none;
+  }
+  .auth-title__title {
     display: flex;
     justify-content: center;
     margin: 0 0;
@@ -47,7 +46,7 @@ $route.path;
     white-space: nowrap;
     width: auto;
   }
-  .img {
+  .auth-title__img {
     display: flex;
     justify-content: center;
     vertical-align: middle;
@@ -58,11 +57,10 @@ $route.path;
       flex: none;
     }
     img {
-      width: 100%; 
-      height: 100%; 
+      width: 100%;
+      height: 100%;
       max-width: 260px;
       max-height: 260px;
-
       object-fit: contain;
     }
   }
