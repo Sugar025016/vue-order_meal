@@ -1,17 +1,12 @@
-// 二次封裝axios
-import axios from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import useUserStore from '@/store/modules/user'
 import { GET_TOKEN, SET_TOKEN } from '@/utils/token'
 import router from '@/router'
-// import { Loading } from '@element-plus/icons-vue'
-
 import { ElLoading } from 'element-plus'
-const request = axios.create({
-  baseURL: import.meta.env.VITE_APP_BASE_API,
-  timeout: 500000,
-})
+
 let loading: any
-function starLoading() {
+
+function startLoading() {
   loading = ElLoading.service({
     lock: true,
     text: '拼命加載中.....',
@@ -20,34 +15,41 @@ function starLoading() {
 }
 
 function endLoading() {
-  loading.close()
+  loading?.close()
 }
 
+const request = axios.create({
+  baseURL: import.meta.env.VITE_APP_BASE_API,
+  timeout: 500000,
+})
+
 request.interceptors.request.use(
-  (config) => {
+  (config: import('axios').InternalAxiosRequestConfig) => {
     if (
       config.url &&
       config.url !== '/order/new' &&
       !/^\/order\/\d+$/.test(config.url)
     ) {
-      starLoading()
+      startLoading()
     }
+
     const tokenValue = GET_TOKEN()
     if (tokenValue) {
-      config.headers['X-CSRF-TOKEN'] = tokenValue
-      config.headers['X-XSRF-TOKEN'] = tokenValue
-      config.headers['token'] = tokenValue
+      config.headers = {
+        ...config.headers,
+        'X-CSRF-TOKEN': tokenValue,
+        'X-XSRF-TOKEN': tokenValue,
+        token: tokenValue,
+      }
     }
 
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  },
+  (error) => Promise.reject(error),
 )
 
 request.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     endLoading()
 
     if (response.config.url === '/login') {
@@ -58,7 +60,7 @@ request.interceptors.response.use(
       SET_TOKEN(cookieValue)
     }
 
-    return response
+    return response.data
   },
   (error) => {
     endLoading()
@@ -69,16 +71,14 @@ request.interceptors.response.use(
       const status = error.response.status
 
       switch (status) {
-        // 401: 未登錄
         case 203:
           message = '服务异常'
-          break // 403 token過期
-        // 401: 未登錄
+          break
         case 401:
           userStore.userClear()
           router.push('/login')
           message = '未登錄'
-          break // 403 token過期
+          break
         case 403:
           router.push('/login')
           userStore.userClear()
@@ -91,18 +91,21 @@ request.interceptors.response.use(
           message = '服務器出現問題'
           break
         default:
-          message = error.response.data.message
+          message = error.response.data?.message || '未知錯誤'
           break
       }
 
-      // ElMessage({
-      //   type: 'error',
-      //   message,
-      // })
-
-      return error.response
+      console.error('API Error:', message)
+      return Promise.reject(error)
     }
+
+    return Promise.reject(error)
   },
 )
+
+// 泛型封裝 request 函式
+export const apiRequest = async <T>(config: AxiosRequestConfig): Promise<T> => {
+  return request(config) as Promise<T>
+}
 
 export default request

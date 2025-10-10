@@ -20,7 +20,7 @@
         </span>
         <hr class="product-modal__body-divider" />
         <div class="product-modal__body-list">
-          <div class="product-modal__body-input">
+          <div class="product-modal__body-input" v-if="false">
             <label for="orderUsername">訂購人:</label>
             <input
               id="orderUsername"
@@ -111,6 +111,7 @@ const changeCount = (num: number) => {
   ::v-deep .el-dialog {
     border-radius: 30px;
     height: auto;
+    padding: 20px;
     .el-dialog__header {
       height: 300px;
       .el-dialog__headerbtn {
