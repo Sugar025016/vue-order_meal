@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
-import type { User } from '@/types/user'
+import type { User } from '@/types/auth'
 
 interface User {
   email: string

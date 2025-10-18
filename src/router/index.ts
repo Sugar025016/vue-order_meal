@@ -5,6 +5,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import HomeLayout from '@/layouts/HomeLayout.vue'
 import HomeView from '@/views/HomeView.vue'
 import ShopView from '@/views/ShopView.vue'
+import TestApi from '@/views/TestApi.vue'
 
 const routes = [
   {
@@ -19,6 +20,7 @@ const routes = [
     path: '/',
     component: HomeLayout,
     children: [
+      { path: '/test', name: 'TestApi', component: TestApi },
       { path: '/', name: 'Home', component: HomeView },
       { path: '/shop', name: 'shop', component: ShopView },
     ],

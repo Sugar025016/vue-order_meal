@@ -5,16 +5,17 @@
       v-model="localVerifyCode"
       placeholder="驗證碼"
       size="large"
-      maxlength="4"
+      maxlength="5"
     >
       <template #append>
-        <img :src="captchaUrl" alt="Captcha Image" />
+        <!-- <img :src="captcha" alt="Captcha Image" /> -->
+        <img :src="captcha?.image" alt="Captcha Image" />
         <div class="auth-captcha__get">
           <el-link
             target="_blank"
             type="primary"
             :underline="false"
-            @click="refreshCaptcha"
+            @click="getCaptcha"
           >
             <el-icon><RefreshRight /></el-icon>
             <span class="span">驗證碼</span>
@@ -26,26 +27,56 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-
+import { onMounted, ref, watch } from "vue";
 import { Warning, RefreshRight } from "@element-plus/icons-vue";
+import { getCaptchaApi } from "@/api/captcha";
+import type { Captcha } from "@/types/captcha";
 
 const props = defineProps({
   verifyCode: String, // 接收父組件的數據
 });
 const emits = defineEmits(["update:verifyCode"]);
-const captchaUrl = ref<string>("/api/register/captcha?timestamp=" + Date.now());
+// const captchaUrl = ref<string>("/api/register/captcha?timestamp=" + Date.now());
 
-const refreshCaptcha = async () => {
-  captchaUrl.value = (await "/api/register/captcha?timestamp=") + Date.now();
-};
+// const refreshCaptcha = async () => {
+//   // captchaUrl.value = (await "/api/register/captcha?timestamp=") + Date.now();
+//   await getCaptcha();
+// };
 const localVerifyCode = ref(props.verifyCode); // 本地變數
 watch(localVerifyCode, (newValue) => {
   emits("update:verifyCode", newValue); // 當本地變數改變時通知父組件
 });
 
+const captcha = ref<Captcha>();
+
+const getCaptcha = async () => {
+  try {
+    const res = await getCaptchaApi();
+    // 伺服器回傳格式是 ApiResponse<Captcha>
+    // 所以可以取出 res.data
+    captcha.value = {
+      image: res.data.image,
+      captcha_key: res.data.captcha_key,
+      ttl: res.data.ttl,
+    };
+    console.log("取得驗證碼成功:", captcha.value);
+  } catch (err) {
+    console.error("取得驗證碼失敗:", err);
+  }
+};
+
+if (captcha.value?.ttl) {
+  setTimeout(() => {
+    alert("驗證碼已過期，請重新取得");
+  }, captcha.value.ttl * 1000);
+}
+
+onMounted(() => {
+  getCaptcha();
+});
+
 defineExpose({
-  refreshCaptcha,
+  getCaptcha,
 });
 </script>
 

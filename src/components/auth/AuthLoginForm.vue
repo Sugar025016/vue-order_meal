@@ -4,11 +4,11 @@
       <h3>會員登入</h3>
 
       <el-form label-position="top" ref="loginForms">
-        <el-form-item prop="username" label="帳號(信箱)：">
+        <el-form-item prop="email" label="帳號(信箱)：">
           <el-input
             clearable
             :prefix-icon="User"
-            v-model="loginForm.username"
+            v-model="loginForm.email"
             placeholder="請輸入帳號"
             size="large"
           ></el-input>
@@ -41,7 +41,7 @@
         </el-form-item>
       </el-form>
       <el-form-item>
-        <el-button class="auth-login-form__login-btn" type="primary" size="default" round>
+        <el-button class="auth-login-form__login-btn" type="primary" size="default" @click="handleLogin" round >
           登入
         </el-button>
         <!-- <el-button type="primary" round>Primary</el-button> -->
@@ -63,14 +63,45 @@
 <script setup lang="ts">
 import { User, Lock } from "@element-plus/icons-vue";
 import AuthCaptcha from "./AuthCaptcha.vue";
-import { reactive } from "vue";
-
+import { reactive,ref  } from "vue";
+import { loginApi, type LoginParams } from '@/api/auth'
 const loginForm = reactive({
-  username: "admin@example.com",
-  password: "password",
+  email: "admin@example.com",
+  password: "admin123",
   verifyCode: "",
   rememberMe: true,
 });
+
+
+const email = ref('')
+const password = ref('')
+const loading = ref(false)
+const error = ref<string | null>(null)
+
+const handleLogin = async () => {
+  loading.value = true
+  error.value = null
+
+  const params: LoginParams = {
+    email: loginForm.email,
+    password: loginForm.password
+  }
+
+  try {
+    const res = await loginApi(params)
+    // ✅ 登入成功，把 token 存 localStorage
+    console.log('登入成功，使用者資料:', res)
+    alert('登入成功！')
+  } catch (err: any) {
+    // Laravel 錯誤訊息會在 err.response.data
+    error.value = err.response?.data?.message || '登入失敗'
+  } finally {
+    loading.value = false
+  }
+}
+
+
+
 </script>
 
 <style lang="scss" scoped>
