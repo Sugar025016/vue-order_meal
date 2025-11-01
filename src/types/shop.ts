@@ -1,23 +1,16 @@
-
-export type Categories = Category[]
+// import { product } from './product';
+import { Tab } from './tab';
+import { Schedule } from './schedule';
 
 export interface Category {
   id?: number
   name: string
 }
-
-export type TimePeriods = TimePeriod[]
 export interface TimePeriod {
   startTime: string
   endTime: string
 }
 
-export type Schedules = Schedule[]
-export interface Schedule {
-  id?: number
-  week: number
-  timePeriods: TimePeriods
-}
 
 
 export interface ShopData {
@@ -27,7 +20,30 @@ export interface ShopData {
   address: string
   phone?: string
   imgUrl: string
-  schedules?: Schedules
+  schedules?: Schedule[]
   orderable?: boolean
 }
+export interface Shop {
+  id: number;
+  brand: string;
+  branch: string;
+  phone: string;
+  description: string | null;
+  is_orderable: number;
+  image_path: string | null;
+  address_data_id: number;
+  city: string;
+  area: string;
+  street: string;
+  detail: string;
+  // products?: product[];
+  tabs: Tab[];
+  schedules: Schedule[];
+}
 
+export interface ShopSearchRequest {
+  city?: string| null;
+  area?: string| null;
+  category?: string| null;
+  keyword?: string| null;
+}

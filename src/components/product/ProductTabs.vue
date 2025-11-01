@@ -2,14 +2,11 @@
   <div class="product-tabs">
     <div class="product-tabs__header">
       <div
-        v-for="(tab, index) in TabProductsData"
+        v-for="(tab, index) in shopStore.shop?.tabs || []"
         :key="index"
         class="product-tabs__tab-label"
       >
-        <span
-          class="product-tabs__tab-label underline"
-          @click="scrollToSection(tab.id)"
-        >
+        <span @click="scrollToSection(tab.id)">
           {{ tab.name }}
         </span>
       </div>
@@ -17,7 +14,7 @@
     <div class="product-tabs__body">
       <div
         :id="tab.id.toString()"
-        v-for="(tab, index) in TabProductsData"
+        v-for="(tab, index) in shopStore.shop?.tabs || []"
         :key="index"
         v-show="true"
         class="product-tabs__tab"
@@ -26,20 +23,26 @@
         <span class="product-tabs__tab-title">{{ tab.name }}</span>
         <div class="products-body">
           <component v-for="product in tab.products" :key="product.id">
+            <!-- tooltip 不會出現 -->
+            <el-tooltip
+              v-if="!shopStore.shop?.is_orderable"
+              effect="light"
+              :content="'電話訂購：' + shopStore.shop?.phone"
+              placement="bottom"
+              teleported="false"
+              :open-delay="150"
+              :close-delay="100"
+            >
+              <div>
+                <ProductCard :product="product" />
+              </div>
+            </el-tooltip>
+
             <ProductCard
-              v-if="shopData.orderable"
+              v-else
               :product="product"
               @click="openModal(product)"
-            ></ProductCard>
-
-            <el-tooltip
-              effect="light"
-              :content="'電話訂購：' + shopData.phone"
-              class="box-item"
-              v-else
-            >
-              <def-product-card :product="product"></def-product-card>
-            </el-tooltip>
+            />
           </component>
         </div>
       </div>
@@ -59,6 +62,10 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 
 import ProductCard from "./ProductCard.vue";
+import { useShopStore } from "@/stores/shop";
+import { Shop } from "@/types/shop.ts";
+
+const shopStore = useShopStore();
 
 const productModalRefs = ref<InstanceType<typeof ProductModal> | null>(null);
 function openPModal() {
@@ -73,6 +80,12 @@ let $route = useRoute();
 let id: number = Number($route.params.id);
 
 let TabProductsData = ref<any[]>([]);
+const shop = ref<Shop>();
+
+shop.value = shopStore.shop;
+
+TabProductsData.value = shopStore.shop?.tabs || [];
+console.log("TabProductsData", TabProductsData.value);
 
 let productData = ref<any>({
   productId: 0,
@@ -114,7 +127,7 @@ const openModal = (v: any) => {
   productData.value.name = v.name;
   productData.value.description = v.description;
   productData.value.qty = 1;
-  productData.value.imgUrl = v.imgUrl;
+  productData.value.imgUrl = v.image_path;
   productData.value.price = v.price;
   productData.value.department = "";
   productData.value.orderUsername = "測試帳號";
@@ -146,11 +159,6 @@ const scrollToSection = (sectionId: number) => {
   }
 };
 
-onMounted(() => {
-  getProductsData(id);
-  getShopData(id);
-});
-
 const activeTab = ref(0);
 
 const myModal = document.getElementById("myModal");
@@ -161,217 +169,9 @@ myModal?.addEventListener("shown.bs.modal", () => {
 });
 
 onMounted(() => {
-  // 模擬 TabProductsData
-  TabProductsData.value = [
-    {
-      id: 1,
-      name: "主餐",
-      products: [
-        {
-          id: 101,
-          name: "牛肉麵",
-          price: 120,
-          imgUrl: "https://picsum.photos/200/150?random=1",
-          shopId: id,
-          orderable: true,
-          description:
-            "不會這種早感的您，靠北頭髮沒是，的最朋友小動物意見，就沒。",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=2",
-          shopId: id,
-          orderable: true,
-          description:
-            "麼好放假好想去，到時知道點也？和只是太弟弟的時候一個很好看書館了是不記，沒關係全沒有，因為只是太弟弟的時候一個很好看書館了是不記，沒關係全只是太弟弟的時候一個很好看書館了是不記，沒關係全只是太弟弟的時候一個很好看書館了是不記沒關係全只是太弟弟的時候一個很好看書館了是不記沒關係全只是太弟弟的時候一個很好看書館了是不記沒關係全只是太弟弟的時候一個很好看書館了是不記，沒關係全望我超，求對方叫我什麼有什麼，",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=7",
-          shopId: id,
-          orderable: true,
-          description:
-            "麼好放假好想去，到時知道點也？和只是太弟弟的時候一個很好看書館了是不記，沒關係全沒有，因為望我超，求對方叫我什麼有什麼，",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=8",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=9",
-          shopId: id,
-          orderable: true,
-          description:
-            "麼好放假好想去，到時知道點也？和只是太弟弟的時候一個很好看書館了是不記，沒關係全沒有，因為望我超，求對方叫我什麼有什麼，",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=10",
-          shopId: id,
-          orderable: false,
-          description:
-            "麼好放假好想去，到時知道點也？和只是太弟弟的時候一個很好看書館了是不記，沒關係全沒有，因為望我超，求對方叫我什麼有什麼，",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=11",
-          shopId: id,
-          orderable: true,
-          description:
-            "麼好放假好想去，到時知道點也？和只是太弟弟的時候一個很好看書館了是不記，沒關係全沒有，因為望我超，求對方叫我什麼有什麼，",
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=12",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 102,
-          name: "雞腿飯",
-          price: 100,
-          imgUrl: "https://picsum.photos/200/150?random=2",
-          shopId: id,
-          orderable: true,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "飲料1111",
-      products: [
-        {
-          id: 201,
-          name: "珍珠奶茶",
-          price: 60,
-          imgUrl: "https://picsum.photos/200/150?random=3",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 201,
-          name: "珍珠奶茶",
-          price: 60,
-          imgUrl: "https://picsum.photos/200/150?random=3",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 201,
-          name: "珍珠奶茶",
-          price: 60,
-          imgUrl: "https://picsum.photos/200/150?random=3",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 201,
-          name: "珍珠奶茶",
-          price: 60,
-          imgUrl: "https://picsum.photos/200/150?random=3",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 201,
-          name: "珍珠奶茶",
-          price: 60,
-          imgUrl: "https://picsum.photos/200/150?random=3",
-          shopId: id,
-          orderable: true,
-        },
-        {
-          id: 202,
-          name: "冬瓜檸檬",
-          price: 55,
-          imgUrl: "https://picsum.photos/200/150?random=4",
-          shopId: id,
-        },
-        {
-          id: 202,
-          name: "冬瓜檸檬",
-          price: 55,
-          imgUrl: "https://picsum.photos/200/150?random=4",
-          shopId: id,
-        },
-        {
-          id: 202,
-          name: "冬瓜檸檬",
-          price: 55,
-          imgUrl: "https://picsum.photos/200/150?random=4",
-          shopId: id,
-        },
-        {
-          id: 202,
-          name: "冬瓜檸檬",
-          price: 55,
-          imgUrl: "https://picsum.photos/200/150?random=4",
-          shopId: id,
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "甜點",
-      products: [
-        {
-          id: 301,
-          name: "布丁",
-          price: 40,
-          imgUrl: "https://picsum.photos/200/150?random=5",
-          shopId: id,
-        },
-        {
-          id: 302,
-          name: "蛋糕",
-          price: 75,
-          imgUrl: "https://picsum.photos/200/150?random=6",
-          shopId: id,
-        },
-      ],
-    },
-  ];
-
-  // 模擬 shopData
-  shopData.value = {
-    id,
-    name: "範例商店",
-    description: "這是一家測試中的餐飲店",
-    address: {
-      city: "台北市",
-      area: "信義區",
-      street: "松壽路",
-      detail: "100號",
-      lat: 25.033,
-      lng: 121.565,
-    },
-    imgId: 1,
-    imgUrl: "https://picsum.photos/400/200?random=10",
-    tabProducts: [],
-    products: [],
-    orderable: true,
-    schedules: [],
-    addMeals: [],
-    category: [],
-    phone: "02-1234-5678",
-  };
+  // getProductsData(id);
+  // getShopData(id);
+  // TabProductsData.value = shopStore.shop?.tabs || [];
 });
 </script>
 
@@ -413,6 +213,10 @@ onMounted(() => {
   .product-tabs__body {
     .product-tabs__tab {
       margin: 10px;
+      @include respond(md) {
+        max-width: 700px;
+        margin: 0 auto;
+      }
       .product-tabs__tab-title {
         margin: 10px;
         font-size: 26px;

@@ -22,6 +22,15 @@ export const deleteSecond = (time: string) => {
   return newTime
 }
 
+
+export const formatMinutes = (mins: number) => {
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  const displayH = String(h % 24).padStart(2, "0");
+  const displayM = String(m).padStart(2, "0");
+  return h >= 24 ? `隔日${displayH}:${displayM}` : `${displayH}:${displayM}`;
+};
+
 export const formatTime = (today: Date) => {
   const year = today.getFullYear()
   const month = today.getMonth() + 1 // 月份从0开始，所以要加1

@@ -2,13 +2,33 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { loginApi, logoutApi } from "@/api/auth";
-import { type LoginRequest, type User } from "@/types/auth";
+import { getUserApi } from "@/api/user";
+import { type LoginRequest } from "@/types/auth";
+import { type User } from "@/types/user";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
   const user = ref<User | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
+
+  // ✅ 取得使用者資料
+  const getUser = async (): Promise<User | null> => {
+    try {
+      const res = await getUserApi();
+
+      console.log("取得使用者資料:", res);
+      if (res.status && res.data) {
+        console.log("取得使用者資料:", res);
+        user.value = res.data;
+        return res.data;
+      }
+      return null;
+    } catch (err: any) {
+      console.error("取得使用者資料失敗:", err);
+      return null;
+    }
+  };
 
   // 登入方法
   const login = async (params: LoginRequest): Promise<User | null> => {
@@ -17,10 +37,14 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       const res = await loginApi(params);
       token.value = res.data?.token ?? null;
-      user.value = res.data?.user ?? null;
       // ✅ 存 token 到 localStorage
-      if (token.value) localStorage.setItem("token", token.value);
-      return user.value;
+      
+      console.log("token:", token.value);
+      if (token.value) {
+        localStorage.setItem("token", token.value);
+        return await getUser();
+      }
+      return null;
     } catch (err: any) {
       error.value = err.response?.data?.message || "登入失敗";
       return null;
@@ -38,9 +62,9 @@ export const useAuthStore = defineStore("auth", () => {
         user.value = null;
         token.value = null;
         localStorage.removeItem("token");
+        await window.location.reload();
         // navigate to home
         router.push("/");
-        // await window.location.reload();
         return res;
       } else {
         return Promise.reject(new Error(res.message));

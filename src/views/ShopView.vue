@@ -10,9 +10,22 @@
 </template>
 <script setup lang="ts">
 import Products from "@/components/product/ProductTabs.vue";
-import socialMedia from "./socialMedia/index.vue";
 import ShopHead from "@/components/shop/ShopHead.vue";
-import rwdBody from "@/layouts/RwdLayout.vue";
+
+import { useShopStore } from "@/stores/shop";
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+
+const shopStore = useShopStore();
+
+
+
+onMounted(async () => {
+  console.log("路由參數:", useRoute().params.id);
+  await shopStore.fetchShop(parseInt(useRoute().params.id as string));
+});
+
+
 </script>
 <style lang="scss" scoped>
 .shop-view {

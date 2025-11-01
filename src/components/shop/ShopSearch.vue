@@ -1,6 +1,8 @@
 <template>
-  <div class="home-search" :class="{ haveAddress: userStore.address }">
-    <div class="home-search__item" v-if="!userStore.address">
+  <div class="home-search" :class="{ haveAddress: authStore.address }">
+  <!-- <div class="home-search" > -->
+    <!-- <div class="home-search__item" v-if="false"> -->
+    <div class="home-search__item" v-if="!authStore.address">
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
@@ -20,11 +22,10 @@
       </div>
     </div>
 
-    <div class="home-search__item" v-if="!userStore.address">
+    <div class="home-search__item" v-if="!authStore.address">
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
-          :disabled="selectedOption1 === 0"
           v-model="selectedOption2"
           @change="changeArea"
         >
@@ -86,47 +87,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import address from "@/utils/address.js";
+import { getCategory } from "@/api/category";
+import type { Categories } from "@/types/category";
+import type { ShopSearchRequest } from "@/types/shop";
 
-// 假使用者資料
-const userStore = {
-  address: false, // true 表示已有地址
+import { useShopStore } from '@/stores/shop'
+import { useAuthStore } from '@/stores/auth'
+
+
+
+
+const shopStore = useShopStore();
+const authStore = useAuthStore();
+
+const categoryList = ref<Categories>([]);
+
+const fetchCategory = async () => {
+  try {
+    const res = await getCategory();
+    if (res.status && res.data) {
+      console.log("取得分類成功:", res.data);
+      console.log("取得分類成功:", categoryList);
+      categoryList.value = res.data; // 將取得的分類資料存入響應式
+      console.log("取得分類成功:", categoryList.value);
+    }
+  } catch (err) {
+    console.error("取得分類失敗:", err);
+  }
 };
-
-// 假地址資料
-const address = [
-  {
-    cityName: "台北市",
-    areas: [
-      { areaName: "中正區" },
-      { areaName: "大安區" },
-      { areaName: "信義區" },
-    ],
-  },
-  {
-    cityName: "新北市",
-    areas: [
-      { areaName: "板橋區" },
-      { areaName: "新莊區" },
-      { areaName: "土城區" },
-    ],
-  },
-  {
-    cityName: "台中市",
-    areas: [
-      { areaName: "北區" },
-      { areaName: "西屯區" },
-      { areaName: "南屯區" },
-    ],
-  },
-];
-
-// 假分類資料
-const categoryList = [
-  { id: 1, name: "餐飲" },
-  { id: 2, name: "娛樂" },
-  { id: 3, name: "購物" },
-];
 
 // 假搜尋歷史
 const searchHistory = ["咖啡", "餐廳", "電影", "遊戲"];
@@ -156,16 +146,43 @@ function handleInput() {
 }
 
 function search() {
-  if (searchText.value && !searchHistory.includes(searchText.value)) {
-    searchHistory.unshift(searchText.value);
-  }
-  showHistory.value = false;
+  // if (searchText.value && !searchHistory.includes(searchText.value)) {
+  //   searchHistory.unshift(searchText.value);
+  // }
+  // showHistory.value = false;
+  const searchParams: ShopSearchRequest = {
+    city:
+      selectedOption1.value > -1
+        ? address[selectedOption1.value].cityName
+        : null,
+    area:
+      selectedOption2.value !== ""
+        ? selectedOption2.value
+        : null,
+    category:
+      selectedOption3.value && selectedOption3.value !== 0
+        ? categoryList.value.find(
+            (c) => c.id === selectedOption3.value
+          )?.name || null
+        : null,
+    keyword: searchText.value !== "" ? searchText.value : null,
+  };
+
+  //   const params: fetchShops = {
+  //   params: searchParams,
+  // };
+  shopStore.setSearchParams(searchParams);
 }
 
 function fillInput(history: string) {
   searchText.value = history;
   showHistory.value = false;
 }
+
+// 初始掛載
+onMounted(() => {
+  fetchCategory();
+});
 </script>
 
 <style lang="scss" scoped>

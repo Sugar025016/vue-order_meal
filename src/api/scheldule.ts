@@ -1,12 +1,12 @@
 // src/api/user.ts
 
-import type { User } from "@/types/user";
+// import type { User } from "@/types/user";
 import type { ApiResponse } from "@/types/response";
 import request from "./request";
 
 enum API {
-  USER_URL = '/user',
+  SCHELDULE_URL = '/scheldule',
 }
 
 export const getUserApi = () =>
-  request.get<any,ApiResponse<User> >(API.USER_URL)
+  request.get<any,ApiResponse<User> >(API.SCHELDULE_URL)

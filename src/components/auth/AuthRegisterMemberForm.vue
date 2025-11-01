@@ -51,7 +51,7 @@
         size="large"
         v-model="registerMember.verifyCode"
       >
-        <AuthCaptcha ref="captchaRef"></AuthCaptcha>
+        <Captcha ref="captchaRef"></Captcha>
       </el-form-item>
     </el-form>
     <!-- <el-checkbox v-model="checked1" label="Option 1" size="large" /> -->
@@ -66,7 +66,7 @@ import { User, Lock, Message } from "@element-plus/icons-vue";
 // import { RegisterMember } from '@/api/user/type'
 // import { reqAddMember } from '@/api/user'
 import { ElMessage } from "element-plus";
-import AuthCaptcha from "./AuthCaptcha.vue";
+import Captcha from "@/components/captcha/Captcha.vue";
 // import { ResponseData } from '@/api/type'
 
 import { useRouter } from "vue-router";

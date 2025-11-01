@@ -34,6 +34,7 @@ export interface User {
   email_verified_at: string | null
   phone_verified_at: string | null
   current_address?: AddressAll;
+  favoriteShopIds: number[];
 }
 
 export interface LoginResponseData {

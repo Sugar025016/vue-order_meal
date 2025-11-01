@@ -18,13 +18,7 @@ export interface LoginResponse {
 enum API {
   REGISTER_URL = "/register",
   LOGIN_URL = "/login",
-  USERINFO_URL = "/user",
   LOGOUT_URL = "/logout",
-  USER_PWD_URL = "/user/pwd",
-  USER_ADDRESS_URL = "/address",
-  USER_FAVORITE_URL = "/user/favorite",
-  REGISTER_CAPTCHA = "/register/captcha",
-  USER_ADDRESS_DELIVERY_URL = "/user/addressDelivery",
 }
 
 

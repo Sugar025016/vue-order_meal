@@ -1,27 +1,105 @@
-import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-import axios from 'axios'
-import type { User } from '@/types/auth'
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { loginApi, logoutApi } from "@/api/auth";
+import { getUserApi } from "@/api/user";
+import { type LoginRequest, User } from "@/types/auth";
+import { changeFavoriteApi } from "@/api/favorite";
+// import { type User } from "@/types/user";
 
-interface User {
-  email: string
-}
+export const useAuthStore = defineStore("auth", () => {
+  // const token = ref<string | null>(null);
+  const user = ref<User | null>(null);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
+  const token = ref<string | null>(localStorage.getItem("token"));
+  const hasToken = computed(() => !!token.value);
+  // let favoriteShopIds = computed(() => user.value?.favoriteShopIds ?? []);
+  // ✅ 取得使用者資料
+  const getUser = async (): Promise<User | null> => {
+    try {
+      const res = await getUserApi();
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null as User | null
-  }),
-  actions: {
-    login(email: string, password: string): boolean {
-      // 模擬驗證邏輯（可改為 API）
-      if (email === 'test@example.com' && password === '123456') {
-        this.user = { email }
-        return true
+      console.log("取得使用者資料:", res);
+      if (res.status && res.data) {
+        user.value = res.data;
+        return res.data;
       }
-      return false
-    },
-    logout() {
-      this.user = null
+      return null;
+    } catch (err: any) {
+      console.error("取得使用者資料失敗:", err);
+      return null;
     }
-  }
-})
+  };
+
+  const changeFavorite = async (shopId: number) => {
+    
+    try {
+      const res = await changeFavoriteApi(shopId);
+      if (res.status && res.data) {
+        console.log("changeFavoriteApi:", res.data);
+        user.value!.favoriteShopIds = res.data;
+        return true;
+      }
+    } catch (err: any) {
+      console.error("取得使用者資料失敗:", err);
+    }
+        return false;
+  };
+
+  // 登入方法
+  const login = async (params: LoginRequest): Promise<User | null> => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const res = await loginApi(params);
+      token.value = res.data?.token ?? null;
+      // ✅ 存 token 到 localStorage
+
+      console.log("token:", token.value);
+      if (token.value) {
+        localStorage.setItem("token", token.value);
+        return await getUser();
+      }
+      return null;
+    } catch (err: any) {
+      error.value = err.response?.data?.message || "登入失敗";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+  // 登出方法
+  const logout = async () => {
+    const router = useRouter();
+    try {
+      const res = await logoutApi();
+      if (res.status) {
+        // clear local state and storage
+        user.value = null;
+        token.value = null;
+        localStorage.removeItem("token");
+        // navigate to home
+        router.push("/");
+        // await window.location.reload();
+        return res;
+      } else {
+        return Promise.reject(new Error(res.message));
+      }
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  };
+
+  return {
+    user,
+    token,
+    loading,
+    error,
+    hasToken,
+    login,
+    logout,
+    getUser,
+    changeFavorite,
+  };
+});

@@ -78,20 +78,40 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import useUserStore from "@/store/modules/user";
-import { UserAddressResponseData } from "@/api/user/type";
-import {
-  reqDeleteUserAddresses,
-  reqGetUserAddresses,
-  reqPutUserAddressDelivery,
-} from "@/api/user";
+import { user, token, loading, error, login, logout } from "@/stores/auth";
+
+// import {  } from "@/types/user";
+// import {
+//   reqDeleteUserAddresses,
+//   reqGetUserAddresses,
+//   reqPutUserAddressDelivery,
+// } from "@/api/user";
 import { ElMessage } from "element-plus";
 
 import EditAddressModal from "@/components/Buy/BuyCheck/src/editAddressModal.vue";
-import { Address, Response } from "@/api/type";
+/**
+ * Local type definitions to avoid missing '@/types' module.
+ * These provide the minimal fields used by this component.
+ */
+type Address = {
+  id?: number;
+  city?: string;
+  area?: string;
+  street?: string;
+  detail?: string;
+  lat?: number;
+  lng?: number;
+};
+
+type Response<T = any> = {
+  status: number;
+  data?: T;
+  message?: string;
+};
+
 import { Plus, EditPen, Delete, CaretTop } from "@element-plus/icons-vue";
 
-import useShopStore from "@/store/modules/shop";
+import useShopStore from "@/stores/shop";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 

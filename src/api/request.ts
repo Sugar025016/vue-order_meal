@@ -18,7 +18,7 @@ request.interceptors.request.use(
 
     // console.log('Request token:', localStorage)
     console.log("Request token:", token);
-    console.log("Request Config:", config);
+    // console.log("Request Config:", config);
     return config;
   },
   (error) => Promise.reject(error)
@@ -27,28 +27,33 @@ request.interceptors.request.use(
 // ✅ 回應攔截器
 request.interceptors.response.use(
   (response: AxiosResponse) => response.data,
-  // (error) => {
-  //   console.error('API Error:', error)
-  //   return Promise.reject(error)
-  // }
   (error: AxiosError<ApiResponse>) => {
     const authStore = useAuthStore();
 
     if (error.response) {
       const status = error.response.status;
+
+      const data = error.response.data;
+
       switch (status) {
+        case 400:
+          showErrorToast(data?.message || "請求參數錯誤");
+          break;
         case 401: // 未授權
           authStore.logout();
-          showErrorToast("登入已過期，請重新登入");
+          showErrorToast(data?.message || "登入已過期，請重新登入");
           break;
         case 403:
-          showErrorToast("沒有權限訪問此資源");
+          showErrorToast(data?.message || "沒有權限訪問此資源");
+          break;
+        case 404:
+          showErrorToast(data?.message || "找不到資源");
           break;
         case 500:
-          showErrorToast("伺服器錯誤，請稍後再試");
+          showErrorToast(data?.message || "伺服器錯誤，請稍後再試");
           break;
         default:
-          showErrorToast(error.response.data?.message || "發生錯誤");
+          showErrorToast(data?.message || "發生錯誤");
       }
     } else if (error.request) {
       // 網路錯誤

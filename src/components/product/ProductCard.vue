@@ -7,7 +7,7 @@
       </span>
       <span class="product-card__price">{{ product.price }}$</span>
     </div>
-    <img :src="product.imgUrl" v-if="product.imgUrl" alt="AA" />
+    <img :src="product.image_path" v-if="product.image_path" alt="AA" />
   </div>
 </template>
 <script setup lang="ts">
@@ -53,7 +53,7 @@ defineProps(["product"]);
   }
   img {
     border-radius: 0 10px 10px 0;
-    height: 150px;
+    height: auto;
     width: 250px;
   }
 }

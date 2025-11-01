@@ -33,37 +33,36 @@
           <el-icon style="vertical-align: middle">
             <component :is="item.meta.icon"></component>
           </el-icon>
-          <span style="margin: 0 5px; vertical-align: middle">
-          </span>
+          <span style="margin: 0 5px; vertical-align: middle"> </span>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
   </div>
 
   <div class="title" v-else>
-      <router-link :to="'/BuyShops'" class="link">
-    <h1 class="title">餓餓定便當</h1>
-  </router-link>
+    <router-link :to="'/'" class="link">
+      <h1 class="title">餓餓定便當</h1>
+    </router-link>
   </div>
 </template>
 <script setup lang="ts">
 // import useLayOutSettingStore from '@/store/modules/setting'
-import { ArrowRight, Fold, Expand } from '@element-plus/icons-vue'
+import { ArrowRight, Fold, Expand } from "@element-plus/icons-vue";
 // import { isBreakpointMD } from '@/utils/windowSize'
 // let LayOutSettingStore = useLayOutSettingStore()
 
-import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { useRoute } from "vue-router";
+import { ref } from "vue";
 
-let $route = useRoute()
+let $route = useRoute();
 
-const paths = $route.path.split('/')
+const paths = $route.path.split("/");
 
-let isSell: boolean = paths.includes('sell')
+let isSell: boolean = paths.includes("sell");
 
 const changeIcon = () => {
   // LayOutSettingStore.isCollapse = !LayOutSettingStore.isCollapse
-}
+};
 
 // LayOutSettingStore.isCollapse = !isBreakpointMD.value
 </script>

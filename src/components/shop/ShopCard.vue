@@ -1,93 +1,57 @@
 <template>
   <el-card
-    class="card"
+    class="shop-card"
     @click="toShop(shop.id)"
     :body-style="{ padding: '0px' }"
   >
-    <div class="image-container">
+    <div class="shop-card_image">
       <img
-        v-if="shop.imgUrl"
-        :src="shop.imgUrl"
+        v-if="shop.image_path"
+        :src="shop.image_path"
         alt="Your Image"
         onerror="this.classList.add('no-image-label');"
       />
     </div>
-    <div class="overlay" v-if="shop.orderable">
+    <div class="shop-card_orderable" v-if="shop.is_orderable">
       <!-- <span class="overlay-text">可線上</span>
       <span class="overlay-text">訂購</span> -->
       <img src="@/assets/images/plateOrder.png" alt="" />
     </div>
-    <div style="padding: 14px">
-      <div class="bottom">
-        <div class="title_favorite">
-          <span class="title">{{ shop.name }}</span>
-          <div @click.stop="changeFavorite(shop.id)" class="favorite">
-            <def-svg-icon
-              class="buy-svg-icon"
-              name="favorite"
-              :color="isFavoriteShop ? '#fd7e14' : favorite"
-              width="30px"
-              height="30px"
-            ></def-svg-icon>
-          </div>
-        </div>
-        <span class="content">{{ shop.address }}</span>
-        <span class="content">{{ shop.description }}</span>
+
+    <div class="shop-card__bottom">
+      <div class="shop-card__header">
+        <span class="shop-card__title"
+          >{{ shop.brand }} - {{ shop.branch }}</span
+        >
+        <ShopFavorite :shopId="props.shop.id" />
       </div>
+      <span class="shop-card__description">{{ shop.description }}</span>
+      <span class="shop-card__address">{{
+        shop.city + shop.area + shop.street + shop.detail
+      }}</span>
     </div>
   </el-card>
 </template>
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
-// import useUserStore from '@/store/modules/user'
-import { onMounted, ref } from 'vue'
-// import { ShopData } from '@/api/shop/type'
+import { useRouter } from "vue-router";
+import { Shop } from "@/types/shop";
+import ShopFavorite from "./ShopFavorite.vue";
 
-// let userStore = useUserStore()
-// defineProps(['shop'])
-
-// interface ShopData {
-//   id: number
-//   name: string
-//   address: string
-//   description: string
-//   imgUrl?: string
-//   orderable: boolean
-// }
-
-interface ShopData {
-  id: number
-  name: string
-  address: string
-  description: string
-  imgUrl?: string
-  orderable: boolean
-}
 const props = defineProps<{
-  shop: ShopData
-  isFavoriteShop: false
-}>()
+  shop: Shop;
+}>();
 
-let $router = useRouter()
-var imageContainer = document.querySelector('.image-container')
-var image = imageContainer?.querySelector('imgUrl')
+let $router = useRouter();
+// var imageContainer = document.querySelector(".image-container");
+// var image = imageContainer?.querySelector("image_path");
 
-image?.addEventListener('load', function () {
-  imageContainer?.classList.add('loaded')
-})
+// image?.addEventListener("load", function () {
+//   imageContainer?.classList.add("loaded");
+// });
 
 const toShop = (id: number) => {
-  $router.push(`/BuyShop/${id}`)
-}
-let favorite = ref('')
-const changeFavorite = async (id: number) => {
-//   await userStore.changeFavoriteStore(id)
-//   favorite.value = await userStore.isLove(id)
-}
-
-onMounted(async () => {
-//   favorite.value = await userStore.isLove(props.shop.id)
-})
+  $router.push(`/shop/${id}`);
+};
 </script>
 <style lang="scss" scoped>
 .el-card {
@@ -97,32 +61,32 @@ onMounted(async () => {
 .el-card:hover {
   transform: scale(1.02); /* 鼠标悬停时放大 20% */
 }
-.card {
+.shop-card {
   border-radius: 20px;
   cursor: pointer;
   position: relative;
 
   overflow: visible;
   display: inline-block;
-  .image-container {
+  .shop-card_image {
     position: relative;
     max-width: 100%;
     /* overflow: hidden; */
     border-radius: 10px;
   }
 
-  .image-container::before {
-    content: '';
+  .shop-card_image::before {
+    content: "";
     display: block;
     padding-top: 50%; /* 1:1 的比例 */
-    background-image: url('@/assets/images/shop2.jpg'); /* 設置背景圖片 */
+    background-image: url("@/assets/images/shop2.jpg"); /* 設置背景圖片 */
     background-size: cover;
     background-position: center;
     background-size: 80% auto; /* 設置背景圖片的尺寸 */
     background-repeat: no-repeat; /* 設置背景圖片不重複 */
   }
 
-  .image-container img {
+  .shop-card_image img {
     border-radius: 20px 20px 0 0;
     position: absolute;
     top: 0;
@@ -134,14 +98,14 @@ onMounted(async () => {
     transition: opacity 0.3s ease; /* 添加漸變動畫效果 */
   }
 
-  .image-container.loaded img {
+  .shop-card_image.loaded img {
     opacity: 100; /* 設置圖片透明度為 1 */
   }
   .no-image-label {
     display: none; /* 設置缺圖片時隱藏（缺圖圖標） */
   }
 
-  .overlay {
+  .shop-card_orderable {
     position: absolute;
     top: -14px;
     right: 14px;
@@ -156,24 +120,43 @@ onMounted(async () => {
     }
   }
 
-  .bottom {
+  .shop-card__bottom {
+    padding: 14px;
     margin-top: 1px;
     line-height: 26px;
     display: flex;
     flex-direction: column;
-    .title_favorite {
+    gap: 4px;
+    justify-content: space-around;
+    height: 100%;
+    .shop-card__header {
       display: flex;
-
       justify-content: space-between;
+      align-items: center;
+
+      .shop-head__el-link {
+        .shop-head__icon-heart--active {
+          color: rgb(255, 136, 0);
+        }
+        .shop-head__icon-heart {
+          color: rgba(172, 172, 172, 0.801);
+        }
+      }
     }
-    .title {
+    .shop-card__title {
       font-size: 24px;
-      color: #999;
+      color: #696969;
     }
-    .content {
+    .shop-card__description {
       line-height: 16px;
       font-size: 14px;
-      color: #999;
+      color: #929292;
+    }
+
+    .shop-card__address {
+      line-height: 16px;
+      font-size: 14px;
+      color: #696969;
     }
   }
 }

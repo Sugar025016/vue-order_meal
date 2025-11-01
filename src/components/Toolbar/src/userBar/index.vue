@@ -8,10 +8,13 @@ import {
   Document,
 } from "@element-plus/icons-vue";
 import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
+import { useAuthStore } from "@/modules/auth";
 let $router = useRouter();
 let $route = useRoute();
 let sellOrderModalOpen = ref(false);
 let memberModelOpen = ref(false);
+
+const authStore = useAuthStore();
 
 const chooseAddressRef = ref<typeof ChooseAddressModel>();
 
@@ -24,7 +27,9 @@ const props = defineProps({
 
 const toLogin = () => {};
 
-const logout = async () => {};
+const logout = async () => {
+  authStore.logout();
+};
 
 const changeLink = async (to: string) => {
   // $router.push('/BuyMember/' + path + '/' + page)
@@ -35,23 +40,23 @@ let orderNew = ref<Orders>([]);
 const chooseAddressOpen = async () => {
   chooseAddressRef.value?.open();
 };
-
-const userStore = ref({
-  account: "demo_account",
-  username: "測試用戶",
-  cartCount: 3,
-  orderCount: 5,
-});
+const userStore = authStore.user;
+// const userStore = ref({
+//   account: "demo_account",
+//   username: "測試用戶",
+//   cartCount: 3,
+//   orderCount: 5,
+// });
 </script>
 <template>
   <div class="user-bar">
     <div class="user-bar__user">
-      <el-icon class="icon" v-if="userStore.username"
+      <el-icon class="icon" v-if="authStore.user?.name"
         ><UserIcon class="svg-icon"
       /></el-icon>
-      <el-dropdown v-if="userStore.username" style="cursor: pointer">
+      <el-dropdown v-if="authStore.user?.name" style="cursor: pointer">
         <span class="el-dropdown-link">
-          {{ userStore.username }}
+          {{ authStore.user?.name }}
           <el-icon class="el-icon--right">
             <arrow-down />
           </el-icon>
@@ -76,21 +81,21 @@ const userStore = ref({
       </el-dropdown>
     </div>
 
-    <div class="user-bar__item" :class="{ shopCar: userStore.account != '' }">
+    <div class="user-bar__item" :class="{ shopCar: authStore.user?.account != '' }">
       <router-link :to="'/BuyShopCart'" class="link">
-        <el-icon class="icon" v-if="userStore.username"
+        <el-icon class="icon" v-if="authStore.user?.name"
           ><ShoppingBag class="svg-icon"
         /></el-icon>
         <span class="user-bar__count">
-          {{ userStore.cartCount }}
+          {{ authStore.user?.cartCount == null ? 0 : authStore.user?.cartCount }}
         </span>
       </router-link>
-      <router-link :to="'/BuyOrder'" class="link" v-if="userStore.account">
-        <el-icon class="icon order" v-if="userStore.username"
+      <router-link :to="'/BuyOrder'" class="link" v-if="authStore.user?.account">
+        <el-icon class="icon order" v-if="authStore.user?.name"
           ><Document class="svg-icon"
         /></el-icon>
         <span class="user-bar__count order-count">
-          {{ userStore.orderCount }}
+          {{ authStore.user?.orderCount == null ? 0 : authStore.user?.orderCount }}
         </span>
       </router-link>
     </div>

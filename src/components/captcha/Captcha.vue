@@ -35,17 +35,21 @@ import type { Captcha } from "@/types/captcha";
 const props = defineProps({
   verifyCode: String, // 接收父組件的數據
 });
-const emits = defineEmits(["update:verifyCode"]);
+const emits = defineEmits<{
+  // (e: "update:verifyCode", value: string): void;
+  (e: "update:captchaKey", value: string): void;
+  // (e: "update:captchaTTL", value: number): void;
+}>();
 // const captchaUrl = ref<string>("/api/register/captcha?timestamp=" + Date.now());
 
 // const refreshCaptcha = async () => {
 //   // captchaUrl.value = (await "/api/register/captcha?timestamp=") + Date.now();
 //   await getCaptcha();
 // };
-const localVerifyCode = ref(props.verifyCode); // 本地變數
-watch(localVerifyCode, (newValue) => {
-  emits("update:verifyCode", newValue); // 當本地變數改變時通知父組件
-});
+// const localVerifyCode = ref(props.verifyCode); // 本地變數
+// watch(localVerifyCode, (newValue) => {
+//   emits("update:verifyCode", newValue); // 當本地變數改變時通知父組件
+// });
 
 const captcha = ref<Captcha>();
 
@@ -60,6 +64,9 @@ const getCaptcha = async () => {
       ttl: res.data.ttl,
     };
     console.log("取得驗證碼成功:", captcha.value);
+
+    emits("update:captchaKey", captcha.value.captcha_key);
+    // emits("update:captchaTTL", captcha.value.ttl);
   } catch (err) {
     console.error("取得驗證碼失敗:", err);
   }
