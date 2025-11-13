@@ -21,13 +21,13 @@ import Header from "@/components/Toolbar/src/index.vue";
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%; /* 滿版寬度 */
+    right: 0;
     z-index: 1000; /* 確保壓在最上層 */
   }
   .home-layout_router-view {
     display: flex;
     flex: 1; /* 主內容填滿剩餘空間 */
-    margin-top: 80px;
+    margin-top: 72px;
   }
 }
 </style>

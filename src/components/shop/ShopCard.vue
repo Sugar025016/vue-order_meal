@@ -37,11 +37,15 @@ import { useRouter } from "vue-router";
 import { Shop } from "@/types/shop";
 import ShopFavorite from "./ShopFavorite.vue";
 
+
 const props = defineProps<{
   shop: Shop;
 }>();
 
 let $router = useRouter();
+
+
+
 // var imageContainer = document.querySelector(".image-container");
 // var image = imageContainer?.querySelector("image_path");
 

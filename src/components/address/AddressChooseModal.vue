@@ -6,9 +6,11 @@
       :before-close="handleClose"
       :show-close="!chooseAddressModelOpen"
       :close-on-click-modal="!chooseAddressModelOpen"
+      :modal-append-to-body="false"
+      :lock-scroll="false"
     >
       <div class="address">
-        <span class="address-introduce">選擇外送地址：</span>
+        <span class="address-introduce">選擇外送地址：--------</span>
         <div class="item">
           <el-scrollbar max-height="400px">
             <el-radio-group
@@ -111,11 +113,13 @@ type Response<T = any> = {
 
 import { Plus, EditPen, Delete, CaretTop } from "@element-plus/icons-vue";
 
-import useShopStore from "@/stores/shop";
+import { useShopStore } from "@/stores/shop";
+import { useAddressStore } from "@/stores/address";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 
 let shopStore = useShopStore();
+let addressStore = useAddressStore();
 
 let userStore = useUserStore();
 
@@ -280,26 +284,11 @@ const open = async () => {
 };
 
 const getUserAddress = async () => {
-  let res: UserAddressResponseData = await reqGetUserAddresses();
-  if (res.status === 200) {
-    addresses.value = res.data;
-    addressParams.value = JSON.parse(JSON.stringify(addresses.value));
-    console.log("www  res.data:", res.data);
-    if (res.data.length === 0) {
-      // isChangeAddress.value = false
-      addAddress();
-    }
-
-    if (userStore.address && userStore.address.id) {
-      addressId.value = userStore.address.id;
-    } else if (addresses.value[0] && addresses.value[0].id) {
-      addressId.value = addresses.value[0].id;
-    }
-  } else {
-    ElMessage({
-      type: "error",
-      message: "搜尋失败",
-    });
+  addressStore.fetchAddresses();
+  addresses.value = addressStore.addresses;
+  addressParams.value = JSON.parse(JSON.stringify(addresses.value));
+  if (addresses.value?.length === 0) {
+    addAddress();
   }
 };
 

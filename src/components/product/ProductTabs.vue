@@ -53,7 +53,7 @@
     <div class="product-tabs__tab"></div>
   </div>
 
-  <ProductModal ref="productModalRefs" :product="productData"></ProductModal>
+  <ProductModal ref="productModalRefs" ></ProductModal>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +64,7 @@ import { useRoute } from "vue-router";
 import ProductCard from "./ProductCard.vue";
 import { useShopStore } from "@/stores/shop";
 import { Shop } from "@/types/shop.ts";
+import { Product } from "@/types/product";
 
 const shopStore = useShopStore();
 
@@ -87,18 +88,7 @@ shop.value = shopStore.shop;
 TabProductsData.value = shopStore.shop?.tabs || [];
 console.log("TabProductsData", TabProductsData.value);
 
-let productData = ref<any>({
-  productId: 0,
-  name: "",
-  description: "",
-  qty: 1,
-  imgUrl: "",
-  price: 0,
-  department: "",
-  orderUsername: "",
-  remark: "",
-  shopId: 0,
-});
+
 
 let shopData = ref<any>({
   id: 0,
@@ -122,18 +112,8 @@ let shopData = ref<any>({
   category: [],
 });
 
-const openModal = (v: any) => {
-  productData.value.productId = v.id;
-  productData.value.name = v.name;
-  productData.value.description = v.description;
-  productData.value.qty = 1;
-  productData.value.imgUrl = v.image_path;
-  productData.value.price = v.price;
-  productData.value.department = "";
-  productData.value.orderUsername = "測試帳號";
-  productData.value.remark = "";
-  productData.value.shopId = v.shopId;
-  productModalRefs.value?.openProduct();
+const openModal = (v: Product) => {
+  productModalRefs.value?.openProduct(v);
   // productModalRefs.value?.addAddressModalOpen.value = true;
 };
 

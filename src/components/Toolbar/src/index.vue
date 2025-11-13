@@ -45,11 +45,10 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .el-header {
   background-color: #ffffff;
-  height: 80px;
+  height: 72px;
   box-shadow: 3px 3px 5px #ffffff94, -3px -3px 5px #ffffffaf;
-  z-index: 10;
   padding: var(--responsive-padding);
-  padding-top:0;
+  padding-top:3px;
   padding-bottom:0;
   .toolbar {
     display: flex;

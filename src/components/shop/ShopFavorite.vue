@@ -37,11 +37,12 @@ const toggleHeart = async (shopId: number) => {
 <style lang="scss" scoped>
 .shop-favorite__el-link {
   .shop-head__icon-heart--favorite {
-    color: var(--el-color-primary);
+    // color: var(--el-color-primary);
+    color: #ff6969;
     // color: red;
   }
   .shop-head__icon-heart {
-    color: rgba(172, 172, 172, 0.801);
+    color: rgba(147, 147, 147, 0.801);
   }
 }
 </style>

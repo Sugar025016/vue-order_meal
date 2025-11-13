@@ -1,6 +1,10 @@
 <template>
   <div class="shop-info-modal">
-    <el-link data-bs-toggle="modal" @click="centerDialogVisible = true" :underline="false" >
+    <el-link
+      data-bs-toggle="modal"
+      @click="centerDialogVisible = true"
+      :underline="false"
+    >
       <el-icon :size="16"><WarningFilled /></el-icon>
       更多資訊
     </el-link>
@@ -18,33 +22,47 @@
 
         <div class="shop-info-modal__body-list">
           <div class="shop-info-modal__body-list-phone layout">
-            <el-icon :size="20"><Phone /></el-icon>
-            <span>營業電話：</span>
-            <span>{{ phone }}</span>
+            <div>
+              <el-icon :size="20"><Phone /></el-icon>
+              <span>營業電話：</span>
+            </div>
+
+            <div class="shop-info-modal__content">
+              <span>{{ phone }}</span>
+            </div>
           </div>
           <div class="shop-info-modal__body-list-times layout">
-            <el-icon :size="20"><Watch /></el-icon>
-            <span>營業時間：</span>
-            <div class="shop-info-modal__body-list-week">
-              <div v-for="i in 7">
-                <span>{{ weekNames[i % 7] }}：</span>
-                <component
-                  v-if="getTimeForTodayWeek(i).length > 0"
-                  v-for="(schedulePeriod, index) in getTimeForTodayWeek(i)"
-                >
-                  <span v-if="index > 0"> , </span>
-                  <span class="time">
-                    {{ schedulePeriod.start }}~{{ schedulePeriod.end }}
-                  </span>
-                </component>
-                <span v-else>非營業日</span>
+            <div>
+              <el-icon :size="20"><Watch /></el-icon><span>營業時間：</span>
+            </div>
+
+            <div class="shop-info-modal__content">
+              <div class="shop-info-modal__body-list-week">
+                <div v-for="i in 7">
+                  <span>{{ weekNames[i % 7] }}：</span>
+                  <component
+                    v-if="getTimeForTodayWeek(i).length > 0"
+                    v-for="(schedulePeriod, index) in getTimeForTodayWeek(i)"
+                  >
+                    <span v-if="index > 0"> , </span>
+                    <span class="time">
+                      {{ schedulePeriod.start }}~{{ schedulePeriod.end }}
+                    </span>
+                  </component>
+                  <span v-else>非營業日</span>
+                </div>
               </div>
             </div>
           </div>
           <div class="shop-info-modal__body-list-address layout">
-            <el-icon :size="20"><Location /></el-icon>
-            <span>營業區域：</span>
-            <span>{{ address }}</span>
+            <div>
+              <el-icon :size="20"><Location /></el-icon>
+              <span>營業區域：</span>
+            </div>
+
+            <div class="shop-info-modal__content">
+              <span>{{ address }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -65,22 +83,26 @@ import { ref } from "vue";
 import { WarningFilled } from "@vicons/carbon";
 import { Location, Phone, Watch } from "@element-plus/icons-vue";
 import { formatMinutes } from "@/utils/time";
-// defineProps(["phone", "name"]);
-// defineProps(["schedules", "phone", "name", "address"]);
 const props = defineProps<{
   schedules: any[];
   phone: string;
   name: string;
   address: string;
 }>();
-const weekNames = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-const getTimeForTodayWeek = (week:number) => {
+const weekNames = [
+  "星期日",
+  "星期一",
+  "星期二",
+  "星期三",
+  "星期四",
+  "星期五",
+  "星期六",
+];
+const getTimeForTodayWeek = (week: number) => {
   if (!props.schedules) return [];
 
   // 過濾指定 week 的 schedules
-  const targetSchedules = props.schedules.filter(
-    (s) => s.week === week
-  );
+  const targetSchedules = props.schedules.filter((s) => s.week === week);
 
   // 轉換成時間字串或保留分鐘數
   return targetSchedules.map((s) => ({
@@ -128,7 +150,12 @@ $b-color: $color;
         line-height: 1.2;
         .layout {
           display: flex;
-          align-items: flex-start;
+          // align-items: flex-start;
+          flex-direction: column;
+          // flex-direction:row-reverse
+          .shop-info-modal__content {
+            margin: 6px 10px 8px 22px ;
+          }
         }
         i {
           margin-right: 3px;

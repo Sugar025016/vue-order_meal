@@ -1,4 +1,82 @@
+<template>
+  <div class="user-bar">
+    <div class="user-bar__user">
+      <el-icon class="icon" v-if="authStore.user?.name"
+        ><UserIcon class="svg-icon"
+      /></el-icon>
+      <el-dropdown v-if="authStore.user?.name" style="cursor: pointer">
+        <span class="el-dropdown-link">
+          {{ authStore.user?.name }}
+          <el-icon class="el-icon--right">
+            <arrow-down />
+          </el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="changeLink('/profile')">
+              會員資料
+            </el-dropdown-item>
+            <el-dropdown-item @click="changeLink('/BuyOrder')">
+              歷史訂單
+            </el-dropdown-item>
+            <el-dropdown-item @click="changeLink('/favorite')">
+              收藏店家
+            </el-dropdown-item>
+            <el-dropdown-item @click="chooseAddressOpen()" divided>
+              設定外送地點
+            </el-dropdown-item>
+            <el-dropdown-item @click="logout()" divided>登出</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+
+    <div
+      class="user-bar__item"
+      :class="{ shopCar: authStore.user?.account != '' }"
+    >
+      <el-link @click="openCartDrawer()" class="link" :underline="false">
+        <el-icon class="icon" v-if="authStore.user?.name"
+          ><ShoppingBag class="svg-icon"
+        /></el-icon>
+        <span class="user-bar__count">
+          {{
+            authStore.user?.cartShopCount == null
+              ? 0
+              : authStore.user?.cartShopCount
+          }}
+        </span>
+      </el-link>
+      <router-link
+        :to="'/BuyOrder'"
+        class="link"
+        v-if="authStore.user?.account"
+      >
+        <el-icon class="icon order" v-if="authStore.user?.name"
+          ><Document class="svg-icon"
+        /></el-icon>
+        <span class="user-bar__count order-count">
+          {{
+            authStore.user?.orderCount == null ? 0 : authStore.user?.orderCount
+          }}
+        </span>
+      </router-link>
+    </div>
+  </div>
+
+  <!-- <SellOrderModal
+    v-model:scheduleVisible="sellOrderModalOpen"
+    :orderNew="orderNew"
+  ></SellOrderModal> -->
+  <!-- <MemberModel v-model:memberModelOpen="memberModelOpen"></MemberModel> -->
+
+  <CartDrawer ref="cartDrawerRef"></CartDrawer>
+  <ChooseAddressModel ref="chooseAddressRef"></ChooseAddressModel>
+</template>
+
 <script setup lang="ts">
+import CartDrawer from "@/components/cart/CartDrawer.vue";
+
 import { ArrowDown } from "@element-plus/icons-vue";
 import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
@@ -8,11 +86,17 @@ import {
   Document,
 } from "@element-plus/icons-vue";
 import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
-import { useAuthStore } from "@/modules/auth";
+import { useAuthStore } from "@/stores/auth";
 let $router = useRouter();
 let $route = useRoute();
 let sellOrderModalOpen = ref(false);
 let memberModelOpen = ref(false);
+
+const cartDrawerRef = ref<InstanceType<typeof CartDrawer> | null>(null);
+function openCartDrawer() {
+  cartDrawerRef.value?.openProduct();
+  console.log("openCartDrawer");
+}
 
 const authStore = useAuthStore();
 
@@ -48,67 +132,6 @@ const userStore = authStore.user;
 //   orderCount: 5,
 // });
 </script>
-<template>
-  <div class="user-bar">
-    <div class="user-bar__user">
-      <el-icon class="icon" v-if="authStore.user?.name"
-        ><UserIcon class="svg-icon"
-      /></el-icon>
-      <el-dropdown v-if="authStore.user?.name" style="cursor: pointer">
-        <span class="el-dropdown-link">
-          {{ authStore.user?.name }}
-          <el-icon class="el-icon--right">
-            <arrow-down />
-          </el-icon>
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="changeLink('/profile')">
-              會員資料
-            </el-dropdown-item>
-            <el-dropdown-item @click="changeLink('/BuyOrder')">
-              歷史訂單
-            </el-dropdown-item>
-            <el-dropdown-item @click="changeLink('/favorite')">
-              收藏店家
-            </el-dropdown-item>
-            <el-dropdown-item @click="chooseAddressOpen()" divided>
-              設定外送地點
-            </el-dropdown-item>
-            <el-dropdown-item @click="logout()" divided>登出</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
-
-    <div class="user-bar__item" :class="{ shopCar: authStore.user?.account != '' }">
-      <router-link :to="'/BuyShopCart'" class="link">
-        <el-icon class="icon" v-if="authStore.user?.name"
-          ><ShoppingBag class="svg-icon"
-        /></el-icon>
-        <span class="user-bar__count">
-          {{ authStore.user?.cartCount == null ? 0 : authStore.user?.cartCount }}
-        </span>
-      </router-link>
-      <router-link :to="'/BuyOrder'" class="link" v-if="authStore.user?.account">
-        <el-icon class="icon order" v-if="authStore.user?.name"
-          ><Document class="svg-icon"
-        /></el-icon>
-        <span class="user-bar__count order-count">
-          {{ authStore.user?.orderCount == null ? 0 : authStore.user?.orderCount }}
-        </span>
-      </router-link>
-    </div>
-  </div>
-
-  <!-- <SellOrderModal
-    v-model:scheduleVisible="sellOrderModalOpen"
-    :orderNew="orderNew"
-  ></SellOrderModal> -->
-  <!-- <MemberModel v-model:memberModelOpen="memberModelOpen"></MemberModel> -->
-
-  <ChooseAddressModel ref="chooseAddressRef"></ChooseAddressModel>
-</template>
 
 <style lang="scss" scoped>
 .svg-icon {

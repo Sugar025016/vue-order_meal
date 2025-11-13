@@ -55,7 +55,7 @@
               <ShopInfoModal
                 :schedules="shopStore.shop?.schedules"
                 :phone="shopStore.shop?.phone"
-                :name="shopStore.shop?.name"
+                :name="shopStore.shop?.brand + ' - ' + shopStore.shop?.branch"
                 :address="
                   shopStore.shop?.city +
                   shopStore.shop?.area +
@@ -71,7 +71,7 @@
         <FbLineShare></FbLineShare>
       </div>
     </el-card>
-    <el-image :src="`https://picsum.photos/300/200?random=1`" />
+    <el-image :src="shopStore.shop?.image_path" />
     <!-- <div></div> -->
   </div>
 </template>
@@ -211,7 +211,7 @@ $b-color: $color;
           word-wrap: break-word;
           word-break: break-all;
           max-width: 100%;
-          color: rgba(0, 0, 0, 0.801);
+          color: rgb(0, 0, 0);
           font-size: 24px;
           line-height: 1.2;
         }

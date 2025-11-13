@@ -33,7 +33,7 @@ export const useShopStore = defineStore('shop', () => {
     try {
       const response = await getShopApi($id);
       console.log("店家資料:", response);
-      shop.value = response;
+      shop.value = response.data;
       console.log("店家資料:", shop.value);
     } catch (error) {
       console.error(error);

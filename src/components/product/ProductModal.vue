@@ -5,18 +5,20 @@
       width="500px"
       align-center
       title="圖片"
+      :modal-append-to-body="false"
+      :lock-scroll="false"
     >
       <img
-        :src="product.imgUrl"
+        :src="product.image_path"
         alt="Flowers in Chania"
         class="product-modal__img"
       />
       <div class="product-modal__body">
-        <h1>{{ props.product.name }}</h1>
+        <h1>{{ product.name }}</h1>
         <span
-          v-if="props.product.description != null"
+          v-if="product.description != null"
           class="product-modal__body-description"
-          >{{ props.product.description }}
+          >{{ product.description }}
         </span>
         <hr class="product-modal__body-divider" />
         <div class="product-modal__body-list">
@@ -26,7 +28,7 @@
               id="orderUsername"
               type="text"
               placeholder="输入文本"
-              v-model="props.product.orderUsername"
+              v-model="product.orderUsername"
             />
           </div>
           <div class="product-modal__body-input">
@@ -34,7 +36,7 @@
             <textarea
               id="remark"
               placeholder="输入文本"
-              v-model="props.product.remark"
+              v-model="addCartRequest.remark"
             ></textarea>
           </div>
         </div>
@@ -46,32 +48,31 @@
             <el-button
               type="primary"
               @click="changeCount(-1)"
-              :disabled="props.product!.qty < 2"
+              :disabled="addCartRequest.qty < 2"
               size="large"
               round
             >
               <el-icon><Minus /></el-icon>
             </el-button>
-
-            <span>{{ props.product!.qty }}</span>
+            <span>{{ addCartRequest.qty }}</span>
 
             <el-button
               type="primary"
               @click="changeCount(1)"
-              :disabled="props.product!.qty > 9"
+              :disabled="addCartRequest.qty > 9"
               size="large"
               round
             >
               <el-icon><Plus /></el-icon>
             </el-button>
             <span class="fs-5">
-              總額：${{ props.product!.qty * props.product!.price }}
+              總額：${{ addCartRequest.qty * product.price }}
             </span>
           </div>
           <el-button
             type="primary"
             size="large"
-            @click="checkAddCart()"
+            @click="addCart()"
             data-bs-dismiss="modal"
             round
           >
@@ -86,23 +87,47 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { Plus, Minus } from "@element-plus/icons-vue";
-const props = defineProps<{ product: any }>();
+import { useCartShopStore } from "@/stores/cart";
+import type { CartShop, AddCartRequest } from "@/types/cart";
+import { Product } from "@/types/product";
+
+const cartShopStore = useCartShopStore();
+
+const props = defineProps<{ product: Product }>();
+const product = ref<Product | null>(null);
+
+const addCartRequest = ref<AddCartRequest>({
+  product_id: 0,
+  shop_id: 0,
+  qty: 1,
+  remark: "",
+});
 const addAddressModalOpen = ref(false);
 
-const openProduct = () => {
+const openProduct = (v: Product) => {
+  product.value = v;
+  addCartRequest.value.product_id = v.id;
+  addCartRequest.value.shop_id = v.shop_id;
+  addCartRequest.value.qty = 1;
+  addCartRequest.value.remark = "";
+  console.log("openProduct", product.value);
+
   addAddressModalOpen.value = true;
+};
+
+const addCart = async () => {
+  console.log("addCart", addCartRequest.value);
+
+  await cartShopStore.addToCart(addCartRequest.value);
+  addAddressModalOpen.value = false;
 };
 
 defineExpose({
   openProduct,
 });
 
-const count = ref(1);
-count.value = 1;
-
 const changeCount = (num: number) => {
-  count.value += num;
-  props.product.qty = count.value;
+  addCartRequest.value.qty += num;
 };
 </script>
 
