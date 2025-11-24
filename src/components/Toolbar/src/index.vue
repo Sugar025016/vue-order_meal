@@ -6,12 +6,13 @@
       <div class="toolbar_left">
         <BreadCrumb />
       </div>
-      <div class="toolbar_middle" v-if="true && true">
+      <div class="toolbar_middle" v-if="authStore.hasToken && true">
         <OrderBar />
       </div>
-      <div class="toolbar_right" >
-        <LoginRegisterBar v-if="!authStore.hasToken"/>
-        <UserBar v-else/>
+      <div class="toolbar_right">
+        <!-- {{authStore.token}} -->
+        <LoginRegisterBar v-if="!authStore.hasToken" />
+        <UserBar v-else />
       </div>
       <div class="" v-if="!true">
         <OrderSetting />
@@ -23,24 +24,20 @@
 <script setup lang="ts">
 import BreadCrumb from "./breadcrumb/index.vue";
 import LoginRegisterBar from "./loginRegisterBar/index.vue";
-import UserBar from  "@/components/Toolbar/src/userBar/index.vue";
-import OrderBar from  "@/components/Toolbar/src/order/index.vue";
+import UserBar from "@/components/Toolbar/src/userBar/index.vue";
+import OrderBar from "@/components/Toolbar/src/order/index.vue";
 
 import { onMounted } from "vue";
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from "@/stores/auth";
 
 defineProps(["scene"]);
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 
 onMounted(async () => {
   // if (authStore.hasToken) {
   //   await authStore.getUser()
   // }
-})
-
-
-
-
+});
 </script>
 <style lang="scss" scoped>
 .el-header {
@@ -48,8 +45,8 @@ onMounted(async () => {
   height: 72px;
   box-shadow: 3px 3px 5px #ffffff94, -3px -3px 5px #ffffffaf;
   padding: var(--responsive-padding);
-  padding-top:3px;
-  padding-bottom:0;
+  padding-top: 3px;
+  padding-bottom: 0;
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -64,7 +61,6 @@ onMounted(async () => {
       align-items: center;
       height: 100%;
     }
-
   }
 }
 </style>

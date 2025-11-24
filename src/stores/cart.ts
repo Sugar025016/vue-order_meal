@@ -14,7 +14,7 @@ import { useAuthStore } from "@/stores/auth";
 
 export const useCartShopStore = defineStore("cart", () => {
   const cartShops = ref<CartShop[]>([]);
-  const cartShop = ref<CartShop>();
+  const cartShop = ref<CartShop|null>();
   const userStore = useAuthStore();
 
   const loading = ref(false);
@@ -42,7 +42,7 @@ export const useCartShopStore = defineStore("cart", () => {
       console.log("購物車資料:", cartShop.value);
     } catch (error) {
       console.error("購物車資料error:",error);
-      cartShop.value = undefined;
+      cartShop.value = null;
     } finally {
       loading.value = false;
     }
@@ -97,6 +97,7 @@ export const useCartShopStore = defineStore("cart", () => {
       await fetchCartShops(); // 更新購物車列表
       await fetchCartShop(cartShopId);
       console.warn("加入購物車成功:");
+      ElMessage.success("購物車更新成功");
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
       // 可以視情況顯示提示訊息

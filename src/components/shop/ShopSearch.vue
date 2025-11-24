@@ -1,8 +1,11 @@
 <template>
-  <div class="home-search" :class="{ haveAddress: authStore.address }">
-  <!-- <div class="home-search" > -->
+  <div
+    class="home-search"
+    :class="{ haveAddress: addressStore.currentAddress }"
+  >
+    <!-- <div class="home-search" > -->
     <!-- <div class="home-search__item" v-if="false"> -->
-    <div class="home-search__item" v-if="!authStore.address">
+    <div class="home-search__item" v-if="!addressStore.currentAddress">
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
@@ -22,7 +25,7 @@
       </div>
     </div>
 
-    <div class="home-search__item" v-if="!authStore.address">
+    <div class="home-search__item" v-if="!addressStore.currentAddress">
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
@@ -93,14 +96,13 @@ import { getCategory } from "@/api/category";
 import type { Categories } from "@/types/category";
 import type { ShopSearchRequest } from "@/types/shop";
 
-import { useShopStore } from '@/stores/shop'
-import { useAuthStore } from '@/stores/auth'
-
-
-
+import { useShopStore } from "@/stores/shop";
+import { useAuthStore } from "@/stores/auth";
+import { useAddressStore } from "@/stores/address";
 
 const shopStore = useShopStore();
 const authStore = useAuthStore();
+const addressStore = useAddressStore();
 
 const categoryList = ref<Categories>([]);
 
@@ -155,15 +157,11 @@ function search() {
       selectedOption1.value > -1
         ? address[selectedOption1.value].cityName
         : null,
-    area:
-      selectedOption2.value !== ""
-        ? selectedOption2.value
-        : null,
+    area: selectedOption2.value !== "" ? selectedOption2.value : null,
     category:
       selectedOption3.value && selectedOption3.value !== 0
-        ? categoryList.value.find(
-            (c) => c.id === selectedOption3.value
-          )?.name || null
+        ? categoryList.value.find((c) => c.id === selectedOption3.value)?.id ||
+          null
         : null,
     keyword: searchText.value !== "" ? searchText.value : null,
   };
@@ -311,7 +309,14 @@ onMounted(() => {
 }
 .haveAddress {
   display: grid;
-  grid-template-columns: 5fr 12fr;
+  grid-template-columns: 3fr 12fr;
   grid-column-gap: 10px;
+
+  .search-container {
+    max-width: 700px;
+  }
+  .item-category {
+    min-width: 200px;
+  }
 }
 </style>

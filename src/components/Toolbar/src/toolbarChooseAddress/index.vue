@@ -4,12 +4,11 @@
       v-model="chooseAddressModelOpen"
       title="外送地址"
       :before-close="handleClose"
-      :show-close="!chooseAddressModelOpen"
       :close-on-click-modal="!chooseAddressModelOpen"
       :modal-append-to-body="false"
       :lock-scroll="false"
     >
-      <div class="address">
+      <div class="address" v-if="addressStore.addresses.length">
         <span class="address-introduce">選擇外送地址：</span>
         <div class="item">
           <el-scrollbar max-height="400px">
@@ -63,6 +62,15 @@
           </div>
         </div>
       </div>
+
+      <div v-else class="no-address">
+        <div class="no-address-content">
+          <p>請新增外送地址</p>
+          <el-button type="primary" size="large" round @click="addAddress()">
+            新增外送地址
+          </el-button>
+        </div>
+      </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button type="primary" @click="checkAddress" round size="large">
@@ -80,29 +88,21 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { ElMessage } from "element-plus";
 
 import EditAddressModal from "@/components/Toolbar/src/toolbarChooseAddress/editAddressModal.vue";
-// import { Address, Response } from '@/api/type'
 import { Plus, EditPen, Delete, CaretTop } from "@element-plus/icons-vue";
 import { useAddressStore } from "@/stores/address";
-let addressStore = useAddressStore();
 
-// import useShopStore from '@/store/modules/shop'
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 import { Address } from "@/types/address";
 
+const addressStore = useAddressStore();
 // 假資料
 const addresses = ref<Address[]>([]);
 
-// let shopStore = useShopStore()
-
-// let userStore = useUserStore()
-
-// const radio1 = ref(0)
-// const addresses = ref<Address[]>()
 const addressId = ref<number>(0);
 
 let $router = useRouter();
@@ -110,158 +110,122 @@ let $router = useRouter();
 const chooseAddressModelOpen = ref<boolean>(false);
 
 const addAddress = async () => {
-  addressRefs.value?.addShop();
+  addressRefs.value?.addShopOpen();
 };
-const reviseAddress = async (address: any) => {
-  if (address.id === userStore.address?.id && userStore.cartCount > 0) {
-    await ElMessageBox.confirm(
-      "外送地址變更，需要清空購物車，你確定要變更嗎？",
-      "外送地址變更",
-      {
-        confirmButtonText: "OK",
-        cancelButtonText: "Cancel",
-        type: "warning",
-      }
-    )
-      .then(() => {
-        addressRefs.value?.updateShop(address);
-      })
-      .catch(() => {
-        return;
-      });
-  } else {
-    addressRefs.value?.updateShop(address);
+const reviseAddress = async (address: Address) => {
+  addressRefs.value?.updateShopOpen(address);
+};
+const checkDeleteAddress = async (address: any) => {
+  try {
+    await ElMessageBox.confirm("您確定要刪除該地址嗎？", "刪除地址", {
+      confirmButtonText: "確定",
+      cancelButtonText: "取消",
+      type: "warning",
+    });
+
+    await deleteAddress(address);
+
+    ElMessage({
+      type: "success",
+      message: "地址已刪除",
+    });
+  } catch (err) {
+    // 點取消或出錯都會進來
+    ElMessage({
+      type: "info",
+      message: "已取消刪除地址",
+    });
   }
 };
 
-const checkDeleteAddress = async (address: any) => {
-  // if (address.id === userStore.address?.id && userStore.cartCount > 0) {
-  //   await ElMessageBox.confirm(
-  //     '刪除此外送地址，需要清空購物車，你確定要變更嗎？',
-  //     '外送地址變更',
-  //     {
-  //       confirmButtonText: 'OK',
-  //       cancelButtonText: 'Cancel',
-  //       type: 'warning',
-  //     },
-  //   ).then(() => {
-  //     deleteAddress(address)
-  //   })
-  // } else {
-  //   deleteAddress(address)
-  // }
-};
-
 const deleteAddress = async (address: any) => {
-  // let res: Response = await reqDeleteUserAddresses(address.id as number)
-  // if (res.status === 200) {
-  //   userStore.userInfo()
-  //   getUserAddress()
-  // } else {
-  //   ElMessage({
-  //     type: 'error',
-  //     message: '搜尋失败',
-  //   })
-  // }
+  const success = await addressStore.deleteAddress(address.id);
+  console.log("刪除的地址是目前選擇的地址，----------------");
+  console.log("success:", success);
+  if (success) {
+    if (addressStore.currentAddress?.id === address.id) {
+      addressStore.currentAddress = null;
+      addressId.value = 0;
+      console.log("刪除的地址是目前選擇的地址，已清除目前地址");
+      console.log("addressId.value:", addressId.value);
+    }
+    getAddress();
+  }
 };
 
 const checkAddress = async () => {
-  // if (userStore.cartCount > 0) {
-  //   let addr: Address = addresses.value?.find(
-  //     (t) => t.id === addressId.value,
-  //   ) as Address
-  //   let mk = calculateDistance(
-  //     addr.lat as number,
-  //     addr.lng as number,
-  //     userStore.cartLat,
-  //     userStore.cartLng,
-  //   )
-  //   if (mk > userStore.cartDeliveryKm && userStore.cartCount > 0) {
-  //     await ElMessageBox.confirm(
-  //       '外送地址變更，需要清空購物車，你確定要變更嗎？',
-  //       '外送地址變更',
-  //       {
-  //         confirmButtonText: 'OK',
-  //         cancelButtonText: 'Cancel',
-  //         type: 'warning',
-  //       },
-  //     )
-  //       .then(() => {
-  //         chooseAddress()
-  //         ElMessage({
-  //           type: 'success',
-  //           message: '購物車已清空',
-  //         })
-  //       })
-  //       .catch(() => {
-  //         ElMessage({
-  //           type: 'info',
-  //           message: '取消變更外送地址',
-  //         })
-  //       })
-  //   } else {
-  //     chooseAddress()
-  //   }
-  // } else {
-  //   chooseAddress()
-  // }
+  if (addressStore.addresses.length < 1) {
+    ElMessage({
+      type: "warning",
+      message: "請新增外送地址",
+    });
+  } else if (!addressId.value || addressId.value === 0) {
+    console.log("請選擇外送地址");
+    console.log("addressId.value:", addressId.value);
+    ElMessage({
+      type: "warning",
+      message: "請選擇外送地址",
+    });
+    return;
+  } else if (addressStore.currentAddress?.id === addressId.value) {
+    chooseAddressModelOpen.value = false;
+
+    return;
+  } else {
+    await setCurrentAddress();
+  }
 };
 function degreesToRadians(degrees: number): number {
   return (degrees * Math.PI) / 180;
 }
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const earthRadiusKm = 6371;
 
-  const dLat = degreesToRadians(lat2 - lat1);
-  const dLon = degreesToRadians(lon2 - lon1);
+// function calculateDistance(
+//   lat1: number,
+//   lon1: number,
+//   lat2: number,
+//   lon2: number
+// ): number {
+//   const earthRadiusKm = 6371;
 
-  const lat1Rad = degreesToRadians(lat1);
-  const lat2Rad = degreesToRadians(lat2);
+//   const dLat = degreesToRadians(lat2 - lat1);
+//   const dLon = degreesToRadians(lon2 - lon1);
 
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.sin(dLon / 2) *
-      Math.sin(dLon / 2) *
-      Math.cos(lat1Rad) *
-      Math.cos(lat2Rad);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   const lat1Rad = degreesToRadians(lat1);
+//   const lat2Rad = degreesToRadians(lat2);
 
-  return earthRadiusKm * c;
-}
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.sin(dLon / 2) *
+//       Math.sin(dLon / 2) *
+//       Math.cos(lat1Rad) *
+//       Math.cos(lat2Rad);
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-const chooseAddress = async () => {
-  // let res: Response = await reqPutUserAddressDelivery(addressId.value)
-  // if (res.status === 200) {
-  //   await shopStore.getShopPage()
-  //   await userStore.userInfo()
-  //   userStore.setCheckAddress(true)
-  //   userStore.address = addresses.value?.find(
-  //     (t) => t.id === addressId.value,
-  //   ) as Address
-  //   chooseAddressModelOpen.value = false
-  //   $router.push('/')
-  // } else {
-  //   ElMessage({
-  //     type: 'error',
-  //     message: '設定外送地址失敗',
-  //   })
-  // }
+//   return earthRadiusKm * c;
+// }
+
+const setCurrentAddress = async () => {
+  console.log("setCurrentAddress addressId.value:", addressId.value);
+  const success = await addressStore.setCurrentAddress(addressId.value);
+  if (success) {
+    chooseAddressModelOpen.value = false;
+  } else {
+    ElMessage({
+      type: "error",
+      message: "設定外送地址失敗",
+    });
+  }
 };
-// let isChangeAddress = ref<boolean>(true)
 let addressParams = ref<Address[]>([]);
 
 const open = async () => {
-  getUserAddress();
+  getAddress();
   chooseAddressModelOpen.value = true;
 };
-const getUserAddress = async () => {
-  addressStore.fetchAddresses();
+const getAddress = async () => {
+  await addressStore.fetchAddresses();
   addressParams.value = JSON.parse(JSON.stringify(addresses.value));
+  addressId.value = addressStore.currentAddress?.id || 0;
   if (addressStore.addresses?.length === 0) {
     addAddress();
   }
@@ -371,6 +335,34 @@ defineExpose({
           // width: 32px;
         }
       }
+    }
+  }
+}
+
+.no-address {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; // 或依需求調整
+  text-align: center;
+
+  .no-address-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    p {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff2b2b;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    .el-button {
+      font-size: 16px;
+      padding: 10px 20px;
     }
   }
 }

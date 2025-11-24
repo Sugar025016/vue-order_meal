@@ -6,6 +6,9 @@
       :before-close="handleClose"
       class="test1"
       width="40%"
+      :modal-append-to-body="false"
+      :lock-scroll="false"
+      :destroy-on-close="true"
     >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -19,7 +22,7 @@
             status-icon
             label-position="top"
           >
-            <el-form-item prop="city">
+            <el-form-item prop="city" label="縣市">
               <el-select
                 v-model="addressData.city"
                 class="m-2"
@@ -28,14 +31,14 @@
                 @change="changeCity()"
               >
                 <el-option
-                  v-for="(item, index) in address"
+                  v-for="(item, index) in addressOptions"
                   :key="index"
                   :label="item.cityName"
                   :value="item.cityName"
                 />
               </el-select>
             </el-form-item>
-            <el-form-item prop="area">
+            <el-form-item prop="area" label="區域">
               <el-select
                 v-model="addressData.area"
                 class="m-2"
@@ -45,8 +48,8 @@
                 @change="changeArea()"
               >
                 <el-option
-                  v-for="(area, index) in address.find(
-                    (address) => address.cityName === addressData.city
+                  v-for="(area, index) in addressOptions.find(
+                    (address:any) => address.cityName === addressData.city
                   )?.areas"
                   :key="index"
                   :value="area.areaName"
@@ -54,7 +57,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item prop="street">
+            <el-form-item prop="street" label="路(街)名或鄉里名稱">
               <el-select
                 class="m-4"
                 v-model="addressData.street"
@@ -63,9 +66,9 @@
                 no-data-text="請先選擇鄉鎮[市]區"
               >
                 <el-option
-                  v-for="(street, index) in address
-                    .find((address) => address.cityName === addressData.city)
-                    ?.areas.find((areas) => areas.areaName === addressData.area)
+                  v-for="(street, index) in addressOptions
+                    .find((address:any) => address.cityName === addressData.city)
+                    ?.areas.find((areas:any) => areas.areaName === addressData.area)
                     ?.streets"
                   :key="index"
                   :value="street.streetName"
@@ -73,7 +76,7 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item prop="detail">
+            <el-form-item prop="detail" label="外送地址詳細資訊">
               <el-input
                 v-model="addressData.detail"
                 size="large"
@@ -110,23 +113,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { nextTick, reactive, ref } from "vue";
-// import { Address } from '@/api/type'
-
-// import address from '@/utils/address.js'
-// import { reqAddUserAddresses } from '@/api/user'
-import { ElMessage } from "element-plus";
-// import { AddressResponseData } from '@/api/user/type'
-// import useUserStore from '@/store/modules/user'
+import { reactive, ref } from "vue";
+import { AddressRequest } from "@/types/address";
+import addressOptions from "@/utils/address.js";
+import { useAddressStore } from "@/stores/address";
 
 const addAddressModalOpen = ref<boolean>(false);
 const handleClose = () => {
   addAddressModalOpen.value = false;
 };
 
-// let userStore = useUserStore()
+const addressStore = useAddressStore();
 const formSize = ref("default");
-
+const addressId = ref<number | null>(null);
 const changeCity = () => {
   addressData.area = "";
   addressData.street = "";
@@ -171,32 +170,39 @@ const addressRules = {
 
 let formRef = ref<any>();
 
-let addressData = reactive<any>({
+let addressData = reactive<AddressRequest>({
   city: "",
   area: "",
   street: "",
   detail: "",
-  lat: undefined,
-  lng: undefined,
 });
 const emits = defineEmits(["childClosed"]);
 const saveAddress = async () => {
-  await formRef.value.validate();
-  // let res: AddressResponseData = await reqAddUserAddresses(addressData)
-  // if (res.status === 200) {
-  //   await userStore.userInfo()
-  //   emits('childClosed')
-  // } else {
-  //   ElMessage({
-  //     type: 'error',
-  //     message: '搜尋失败',
-  //   })
-  // }
+  if (!originalAddress.value || isAddressChanged()) {
+    await formRef.value.validate();
+    const success = await addressStore.createOrUpdateAddress(
+      addressData,
+      addressId.value
+    );
+    if (success) {
+      addAddressModalOpen.value = false;
+    }
+  }
+  addAddressModalOpen.value = false;
 };
 
-const addShop = () => {
-  addAddressModalOpen.value = true;
+const isAddressChanged = () => {
+  if (!originalAddress.value) return true;
+  return (
+    addressData.city !== originalAddress.value.city ||
+    addressData.area !== originalAddress.value.area ||
+    addressData.street !== originalAddress.value.street ||
+    addressData.detail !== originalAddress.value.detail
+  );
+};
 
+const addShopOpen = () => {
+  addressId.value = null;
   Object.assign(addressData, {
     city: "",
     area: "",
@@ -204,44 +210,32 @@ const addShop = () => {
     detail: "",
   });
   title.value = "新增外送地址";
-  nextTick(() => {
-    formRef.value.clearValidate("city");
-    formRef.value.clearValidate("area");
-    formRef.value.clearValidate("street");
-    formRef.value.clearValidate("detail");
-  });
-};
-
-const updateShop = (address: any) => {
   addAddressModalOpen.value = true;
-
+};
+let originalAddress = ref<AddressRequest | null>(null);
+const updateShopOpen = (address: any) => {
+  addressId.value = address.id;
   title.value = "更改地址";
   Object.assign(addressData, address);
-
-  nextTick(() => {
-    formRef.value.clearValidate("city");
-    formRef.value.clearValidate("area");
-    formRef.value.clearValidate("street");
-    formRef.value.clearValidate("detail");
-  });
+  originalAddress.value = JSON.parse(JSON.stringify(address));
+  addAddressModalOpen.value = true;
 };
 const title = ref<string>();
 
 defineExpose({
-  updateShop,
-  addShop,
+  updateShopOpen,
+  addShopOpen,
   handleClose,
 });
 </script>
 
 <style lang="scss" scoped>
+.el-dialog__body {
+  max-height: 90vh; /* 90% viewport 高度 */
+  overflow: hidden; /* 超過不滾動 */
+}
 .el-form {
   .el-form-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 22px;
-    max-width: 500px;
     .el-form-item__label {
       display: flex;
       justify-content: center;

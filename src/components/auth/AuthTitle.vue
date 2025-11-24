@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-title">
+  <div class="auth-title" @click="toHome()">
     <div class="auth-title__title">
       <!-- <def-title></def-title> -->
       <span>餓餓定便當</span>
@@ -22,8 +22,15 @@
 </template>
 <script setup lang="ts">
 import { useRoute } from "vue-router";
+import { useRouter } from "vue-router";
+
+let $router = useRouter();
 let $route = useRoute();
 $route.path;
+
+const toHome = async () => {
+  $router.push("/");
+};
 </script>
 <style lang="scss" scoped>
 .auth-title {
@@ -64,5 +71,9 @@ $route.path;
       object-fit: contain;
     }
   }
+}
+.auth-title:hover {
+  // transform: scale(1.01);
+  cursor: pointer;
 }
 </style>

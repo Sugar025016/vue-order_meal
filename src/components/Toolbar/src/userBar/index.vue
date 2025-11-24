@@ -13,13 +13,13 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="changeLink('/profile')">
+            <el-dropdown-item @click="changeLink('/user/profile')">
               會員資料
             </el-dropdown-item>
-            <el-dropdown-item @click="changeLink('/BuyOrder')">
+            <el-dropdown-item @click="changeLink('/user/order')">
               歷史訂單
             </el-dropdown-item>
-            <el-dropdown-item @click="changeLink('/favorite')">
+            <el-dropdown-item @click="changeLink('/user/favorite')">
               收藏店家
             </el-dropdown-item>
             <el-dropdown-item @click="chooseAddressOpen()" divided>
@@ -87,6 +87,9 @@ import {
 } from "@element-plus/icons-vue";
 import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useAddressStore } from "@/stores/address";
+
+const addressStore = useAddressStore();
 let $router = useRouter();
 let $route = useRoute();
 let sellOrderModalOpen = ref(false);
@@ -131,6 +134,16 @@ const userStore = authStore.user;
 //   cartCount: 3,
 //   orderCount: 5,
 // });
+
+
+onMounted(async () => {
+  
+  const need = await addressStore.checkNeedChooseAddress();
+  console.log("need:////////////",need )
+  if (need) {
+    chooseAddressRef.value?.open();
+  }
+});
 </script>
 
 <style lang="scss" scoped>

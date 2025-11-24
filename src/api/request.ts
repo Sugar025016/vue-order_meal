@@ -20,7 +20,7 @@ request.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
-
+let isLoggingOut = false;
 // ✅ 回應攔截器
 request.interceptors.response.use(
   (response: AxiosResponse) => response.data,
@@ -37,14 +37,24 @@ request.interceptors.response.use(
           showErrorToast(data?.message || "請求參數錯誤");
           break;
         case 401: // 未授權
-          authStore.logout();
-          showErrorToast(data?.message || "登入已過期，請重新登入");
+          if (!isLoggingOut) {
+            isLoggingOut = true;
+            localStorage.removeItem("token");
+            console.log("Unauthorized, redirecting to login...");
+            authStore.user = null;
+            authStore.token = null;
+            showErrorToast(data?.message || "登入已過期，請重新登入");
+            window.location.href = "/login";
+          }
           break;
         case 403:
           showErrorToast(data?.message || "沒有權限訪問此資源");
           break;
         case 404:
           showErrorToast(data?.message || "找不到資源");
+          break;
+        case 422:
+          showErrorToast(data?.message || "驗證錯誤");
           break;
         case 500:
           showErrorToast(data?.message || "伺服器錯誤，請稍後再試");
@@ -53,8 +63,11 @@ request.interceptors.response.use(
           showErrorToast(data?.message || "發生錯誤");
       }
     } else if (error.request) {
+      showErrorToast(error?.request || "網路錯誤，請檢查網路連線");
       // 網路錯誤
-      showErrorToast("網路錯誤，請檢查網路連線");
+      // showErrorToast("網路錯誤，請檢查網路連線");
+
+      console.log("error request", error.request);
     } else {
       // 其他錯誤
       showErrorToast(error.message);

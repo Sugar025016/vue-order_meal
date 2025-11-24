@@ -14,6 +14,7 @@
       <div class="cart__table">
         <el-table :data="cartShopStore.cartShop.cart_items" height="100%">
           <el-table-column
+            min-width="120"
             prop="product.name"
             label="商品名稱"
             align="center"
@@ -21,7 +22,7 @@
           />
           <el-table-column prop="remark" label="備註" align="center" />
           <el-table-column prop="product.price" label="單價" align="center" />
-          <el-table-column prop="qty" label="數量" align="center" width="180">
+          <el-table-column prop="qty" label="數量" align="center" width="180" sortable>
             <template #default="scope">
               <el-input-number
                 v-model="scope.row.qty"
@@ -185,7 +186,7 @@ onBeforeUnmount(() => {
   display: block;
   overflow: hidden;
   margin: auto;
-  height: 100%;
+  min-height: 100%;
 
   .cart__header {
     display: flex;
@@ -205,8 +206,8 @@ onBeforeUnmount(() => {
     display: grid; /* 使用CSS Grid布局 */
     grid-template-columns: minmax(720px, 9fr) minmax(180px, 3fr);
     gap: 10px;
-
-    height: 100%;
+    flex:1;
+    min-height: 100%;
 
     .cart__table {
       max-height: 400px;
@@ -293,7 +294,7 @@ onBeforeUnmount(() => {
         background-color: rgb(253, 102, 20);
       }
       .cart__to-shop:hover {
-        background-color: rgba(253, 114, 1, 0.247);
+        background-color: rgb(255, 231, 212);
         color: #000;
       }
     }

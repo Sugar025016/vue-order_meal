@@ -1,6 +1,6 @@
 <template>
   <div class="footer-top-title">
-    <router-link :to="{ path: '/BuyShops' }">
+    <router-link :to="{ path: '/' }">
       <span class="footer-top-title__title">餓餓定便當</span>
     </router-link>
   </div>

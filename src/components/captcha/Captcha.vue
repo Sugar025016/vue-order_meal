@@ -36,7 +36,7 @@ const props = defineProps({
   verifyCode: String, // 接收父組件的數據
 });
 const emits = defineEmits<{
-  // (e: "update:verifyCode", value: string): void;
+  (e: "update:verifyCode", value: string): void;
   (e: "update:captchaKey", value: string): void;
   // (e: "update:captchaTTL", value: number): void;
 }>();
@@ -46,10 +46,10 @@ const emits = defineEmits<{
 //   // captchaUrl.value = (await "/api/register/captcha?timestamp=") + Date.now();
 //   await getCaptcha();
 // };
-// const localVerifyCode = ref(props.verifyCode); // 本地變數
-// watch(localVerifyCode, (newValue) => {
-//   emits("update:verifyCode", newValue); // 當本地變數改變時通知父組件
-// });
+const localVerifyCode = ref(props.verifyCode || ""); // 本地變數
+watch(localVerifyCode, (newValue) => {
+  emits("update:verifyCode", newValue || ""); // 當本地變數改變時通知父組件
+});
 
 const captcha = ref<Captcha>();
 

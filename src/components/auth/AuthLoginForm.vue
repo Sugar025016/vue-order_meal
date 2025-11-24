@@ -78,8 +78,8 @@ import { useRouter } from 'vue-router'
 let $router = useRouter();
 const authStore = useAuthStore()
 const loginForm = reactive({
-  email: "admin@example.com",
-  password: "admin123",
+  email: "ruby028016@gmail.com",
+  password: "password",
   verifyCode: "",
   rememberMe: true,
 });

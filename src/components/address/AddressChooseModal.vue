@@ -118,8 +118,8 @@ import { useAddressStore } from "@/stores/address";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
 
-let shopStore = useShopStore();
-let addressStore = useAddressStore();
+const shopStore = useShopStore();
+const addressStore = useAddressStore();
 
 let userStore = useUserStore();
 

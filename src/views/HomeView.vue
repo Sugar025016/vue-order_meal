@@ -25,8 +25,10 @@ import ShopCard from "@/components/shop/ShopCard.vue";
 import HomeImage from "@/components/home/HomeTop.vue";
 import ShopSearch from "@/components/shop/ShopSearch.vue";
 import { useShopStore } from "@/stores/shop";
+import { useAddressStore } from "@/stores/address";
 
 const shopStore = useShopStore();
+const addressStore = useAddressStore();
 
 const chooseAddress = async () => {};
 const registerShop = () => {};
@@ -36,9 +38,12 @@ let timer: any;
 const handleScroll = async () => {};
 // 在組件銷毀時移除滾動事件監聽器，防止記憶體洩漏
 
-onMounted(() => {
+onMounted(async () => {
   // 在元件掛載後新增滾動事件監聽器
   window.addEventListener("scroll", handleScroll), chooseAddress();
+  if (localStorage.getItem("token") && addressStore.addresses) {
+    await addressStore.fetchAddresses();
+  }
   shopStore.fetchShops();
 });
 
@@ -64,27 +69,31 @@ onMounted(() => {
       padding: 0 5px;
       @media (min-width: $breakpoint-xs) {
         grid-template-columns: repeat(1, 1fr);
-        max-width: 500px;
+        // max-width: 500px;
+        // max-width: none;
         // margin: 15px 0;
       }
 
       @media (min-width: $breakpoint-sm) {
         grid-template-columns: repeat(2, 1fr);
-        max-width: 1200px;
+        // max-width: 1200px;
+        // max-width: none;
       }
 
       @media (min-width: $breakpoint-md) {
         grid-template-columns: repeat(3, 1fr);
-        max-width: 1200px;
+        // max-width: 1200px;
+        // max-width: none;
       }
 
       @media (min-width: $breakpoint-xl) {
         grid-template-columns: repeat(3, 1fr);
-        max-width: 1300px;
+        // max-width: 1300px;
+        // max-width: none;
       }
       @media (min-width: $breakpoint-xxl) {
         grid-template-columns: repeat(4, 1fr);
-        max-width: none;
+        // max-width: none;
       }
     }
 

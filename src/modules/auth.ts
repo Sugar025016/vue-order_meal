@@ -3,8 +3,9 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { loginApi, logoutApi } from "@/api/auth";
 import { getUserApi } from "@/api/user";
-import { type LoginRequest } from "@/types/auth";
-import { type User } from "@/types/user";
+import { type LoginRequest, User } from "@/types/auth";
+import { Email } from "@vicons/carbon";
+// import { type User } from "@/types/user";
 
 export const useAuthStore = defineStore("auth", () => {
   const token = ref<string | null>(null);
@@ -12,6 +13,7 @@ export const useAuthStore = defineStore("auth", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
+  const router = useRouter();
   // ✅ 取得使用者資料
   const getUser = async (): Promise<User | null> => {
     try {
@@ -38,7 +40,7 @@ export const useAuthStore = defineStore("auth", () => {
       const res = await loginApi(params);
       token.value = res.data?.token ?? null;
       // ✅ 存 token 到 localStorage
-      
+
       console.log("token:", token.value);
       if (token.value) {
         localStorage.setItem("token", token.value);
@@ -46,7 +48,15 @@ export const useAuthStore = defineStore("auth", () => {
       }
       return null;
     } catch (err: any) {
-      error.value = err.response?.data?.message || "登入失敗";
+      const status = err.response?.status;
+      const data = err.response?.data;
+      if (status === 403 && data?.message === "尚未驗證 Email") {
+        email.value=params.email ;
+        router.push({ name: "VerifyOtp", query: { email: params.email } });
+      } else {
+        error.value = data?.message || "登入失敗";
+      }
+      // error.value = err.response?.data?.message || "登入失敗";
       return null;
     } finally {
       loading.value = false;
@@ -54,7 +64,6 @@ export const useAuthStore = defineStore("auth", () => {
   };
   // 登出方法
   const logout = async () => {
-    const router = useRouter();
     try {
       const res = await logoutApi();
       if (res.status) {

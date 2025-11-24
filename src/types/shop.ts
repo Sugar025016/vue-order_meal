@@ -1,27 +1,25 @@
 // import { product } from './product';
-import { Tab } from './tab';
-import { Schedule } from './schedule';
+import { Tab } from "./tab";
+import { Schedule } from "./schedule";
 
 export interface Category {
-  id?: number
-  name: string
+  id?: number;
+  name: string;
 }
 export interface TimePeriod {
-  startTime: string
-  endTime: string
+  startTime: string;
+  endTime: string;
 }
 
-
-
 export interface ShopData {
-  id: number
-  name: string
-  description: string
-  address: string
-  phone?: string
-  imgUrl: string
-  schedules?: Schedule[]
-  orderable?: boolean
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  phone?: string;
+  imgUrl: string;
+  schedules?: Schedule[];
+  orderable?: boolean;
 }
 export interface Shop {
   id: number;
@@ -42,8 +40,10 @@ export interface Shop {
 }
 
 export interface ShopSearchRequest {
-  city?: string| null;
-  area?: string| null;
-  category?: string| null;
-  keyword?: string| null;
+  city?: string | null;
+  area?: string | null;
+  category?: number | null;
+  keyword?: string | null;
+  lat?: number | null;
+  lng?: number | null;
 }

@@ -19,4 +19,6 @@ app.use(pinia); // 啟用 Pinia
 app.use(router); // 啟用 Vue Router
 app.use(ElementPlus, { locale: zhCn }); // 使用 Element Plus 並設置中文語言包
 
+
+
 app.mount("#app");

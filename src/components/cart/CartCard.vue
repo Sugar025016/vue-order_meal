@@ -161,8 +161,9 @@ const deleteCart = (v: number) => {
     font-size: 24px;
     margin: 6px;
 
-    .cart-card:hover {
-      color: #ff7875;
+    .el-icon:hover {
+      color: #ff312d;
+      transform: scale(1.03);
     }
   }
   .cart-card__product-info {
@@ -217,9 +218,23 @@ const deleteCart = (v: number) => {
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 8px;
       i {
         font-size: 24px;
         color: #606060;
+      }
+      // :hover {
+      //   color: #ff842d;
+      //   transform: scale(1.05);
+      //   border: 1px solid #ff842d;
+      // }
+    }
+    .cart-card__product-plus:hover {
+      transform: scale(1.05);
+      border: 1px solid #ff842d;
+      i {
+        font-size: 24px;
+        color: #ff842d;
       }
     }
   }

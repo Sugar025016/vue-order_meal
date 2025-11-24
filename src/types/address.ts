@@ -12,7 +12,7 @@ export interface Address {
   street: string;
 }
 
-export interface AddAddressRequest {
+export interface AddressRequest {
   city: string;
   area: string;
   street: string;
@@ -24,4 +24,14 @@ export interface AddressData {
   city: string;
   area: string;
   street: string;
+}
+
+export interface AddressOptions {
+  cityName: string;
+  areas: {
+    areaName: string;
+    streets: {
+      streetName: string;
+    }[];
+  }[];
 }

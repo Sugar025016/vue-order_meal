@@ -1,11 +1,13 @@
 // stores/shop.ts
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { Shop } from '@/types/shop';
-import { getShopsApi ,getShopApi } from '@/api/shop';
-import { ShopSearchRequest } from '@/types/shop';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { Shop } from "@/types/shop";
+import { getShopsApi, getShopApi } from "@/api/shop";
+import { ShopSearchRequest } from "@/types/shop";
+import { useAddressStore } from "@/stores/address";
 
-export const useShopStore = defineStore('shop', () => {
+export const useShopStore = defineStore("shop", () => {
+  const addressStore = useAddressStore();
   // 資料列表
   const shops = ref<Shop[]>([]);
   const shop = ref<Shop>();
@@ -18,6 +20,13 @@ export const useShopStore = defineStore('shop', () => {
   const fetchShops = async (params?: ShopSearchRequest) => {
     console.log("fetchShops params:", params);
     loading.value = true;
+    if (addressStore.currentAddress) {
+      searchParams.value.lat = addressStore.currentAddress.lat;
+      searchParams.value.lng = addressStore.currentAddress.lng;
+    }
+    
+    console.log("addressStore.currentAddress ------------:", addressStore.currentAddress);
+
     try {
       const response = await getShopsApi(params || searchParams.value);
       shops.value = response.data;
@@ -27,7 +36,7 @@ export const useShopStore = defineStore('shop', () => {
       loading.value = false;
     }
   };
-    // 取得店家
+  // 取得店家
   const fetchShop = async ($id: number) => {
     loading.value = true;
     try {
@@ -55,6 +64,6 @@ export const useShopStore = defineStore('shop', () => {
     loading,
     fetchShops,
     fetchShop,
-    setSearchParams
+    setSearchParams,
   };
 });
