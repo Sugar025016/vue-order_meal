@@ -20,10 +20,9 @@ export const useShopStore = defineStore("shop", () => {
   const fetchShops = async (params?: ShopSearchRequest) => {
     console.log("fetchShops params:", params);
     loading.value = true;
-    if (addressStore.currentAddress) {
-      searchParams.value.lat = addressStore.currentAddress.lat;
-      searchParams.value.lng = addressStore.currentAddress.lng;
-    }
+      searchParams.value.lat = addressStore.currentAddress?.lat;
+      searchParams.value.lng = addressStore.currentAddress?.lng;
+    
     
     console.log("addressStore.currentAddress ------------:", addressStore.currentAddress);
 

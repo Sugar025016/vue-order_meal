@@ -27,7 +27,8 @@ export interface Shop {
   branch: string;
   phone: string;
   description: string | null;
-  is_orderable: number;
+  is_orderable: boolean;
+  is_open: boolean;
   image_path: string | null;
   address_data_id: number;
   city: string;

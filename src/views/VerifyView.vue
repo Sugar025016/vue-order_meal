@@ -230,7 +230,7 @@ onMounted(() => {
 }
 .verify-view__image {
   width: 200px;
-  /* margin-bottom: 10px; */
+  margin:  6px 0 16px 0; 
 }
 
 /* OTP Input */

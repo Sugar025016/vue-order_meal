@@ -1,68 +1,74 @@
 <template>
-  <div class="cart-card">
-    <!-- <el-link
+  <div class="cart-card-wrapper" :class="{ disabled: isDisabled }">
+    <div class="cart-card">
+      <!-- <el-link
       class="cart-card__body"
       @click="toShop(props.cartShop.shop.id)"
       :undefinedline="false"
     > -->
-    <div class="cart-card__body">
-      <div class="cart-card__shop-info">
-        <div class="cart-card__shop-image">
-          <img
-            v-if="props.cartShop.shop.image_path"
-            :src="props.cartShop.shop.image_path"
-            alt="Your Image"
-            onerror="this.classList.add('no-image-label');"
-          />
+      <div class="cart-card__body">
+        <div class="cart-card__shop-info">
+          <div class="cart-card__shop-image">
+            <img
+              v-if="props.cartShop.shop.image_path"
+              :src="props.cartShop.shop.image_path"
+              alt="Your Image"
+              onerror="this.classList.add('no-image-label');"
+            />
+          </div>
+          <div class="cart-card__cotent">
+            <span class="cart-card__title"
+              >{{ props.cartShop.shop.brand }} -
+              {{ props.cartShop.shop.branch }}</span
+            >
+            <span class="cart-card__phone">{{
+              props.cartShop.shop.phone
+            }}</span>
+          </div>
+          <div class="cart-card__delete">
+            <el-icon @click.stop="deleteCart(props.cartShop.id)">
+              <DeleteFilled />
+            </el-icon>
+          </div>
         </div>
-        <div class="cart-card__cotent">
-          <span class="cart-card__title"
-            >{{ props.cartShop.shop.brand }} -
-            {{ props.cartShop.shop.branch }}</span
+
+        <div class="cart-card__product-info">
+          <!-- {{ props.cartShop.cart_items }} -->
+
+          <div
+            v-for="(cartItem, index) in props.cartShop.cart_items.slice(0, 5)"
+            :key="cartItem.product.id"
+            class="cart-card__product-image"
           >
-          <span class="cart-card__phone">{{ props.cartShop.shop.phone }}</span>
-        </div>
-        <div class="cart-card__delete">
-          <el-icon @click.stop="deleteCart(props.cartShop.id)">
-            <DeleteFilled />
-          </el-icon>
-        </div>
-      </div>
-
-      <div class="cart-card__product-info">
-        <!-- {{ props.cartShop.cart_items }} -->
-
-        <div
-          v-for="(cartItem, index) in props.cartShop.cart_items.slice(0, 5)"
-          :key="cartItem.product.id"
-          class="cart-card__product-image"
-        >
-          <!-- {{ cartItem.product }} -->
-          <img
-            :src="cartItem.product.image_path"
-            alt="Your Image"
-            onerror="this.classList.add('no-image-label');"
-          />
-          <template v-if="index === 4 && props.cartShop.cart_items.length > 5">
-            <div class="cart-card__overlay">
-              +{{ props.cartShop.cart_items.length - 4 }}
-            </div>
-          </template>
-        </div>
-        <!-- <span v-if="props.cartShop.cart_items.length > 4">....</span> -->
-        <div
-          class="cart-card__product-plus"
-          @click="toShop(props.cartShop.shop.id)"
-        >
-          <el-icon><Plus /></el-icon>
+            <!-- {{ cartItem.product }} -->
+            <img
+              :src="cartItem.product.image_path"
+              alt="Your Image"
+              onerror="this.classList.add('no-image-label');"
+            />
+            <template
+              v-if="index === 4 && props.cartShop.cart_items.length > 5"
+            >
+              <div class="cart-card__overlay">
+                +{{ props.cartShop.cart_items.length - 4 }}
+              </div>
+            </template>
+          </div>
+          <!-- <span v-if="props.cartShop.cart_items.length > 4">....</span> -->
+          <div
+            class="cart-card__product-plus"
+            @click="toShop(props.cartShop.shop.id)"
+          >
+            <el-icon><Plus /></el-icon>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="cart-card__foot">
-      <el-button plain @click="toCart(props.cartShop.id)" round
-        >前往購物車</el-button
-      >
+      <div class="cart-card__foot">
+        <el-button plain @click="toCart(props.cartShop.id)" round
+          >前往購物車</el-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -72,13 +78,22 @@ import { DeleteFilled, Plus } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { CartShop } from "@/types/cart";
 import { useCartShopStore } from "@/stores/cart";
+import { useShopSchedule } from "@/composables/useShopSchedule";
+import { Schedule } from "@/types/schedule";
+import { computed } from "vue";
 
 const cartShopStore = useCartShopStore();
 
 const props = defineProps<{
   cartShop: CartShop;
 }>();
-
+const schedules = props.cartShop.shop.schedules as Schedule[];
+const { isOpenTime } = useShopSchedule(schedules);
+const isDisabled = computed(() => {
+  return (
+    !isOpenTime.value || !props.cartShop.is_orderable || !props.cartShop.is_open
+  );
+});
 let $router = useRouter();
 
 const toShop = (id: number) => {
@@ -244,6 +259,31 @@ const deleteCart = (v: number) => {
     width: 100%;
     button {
       width: 100%;
+    }
+  }
+}
+
+.cart-card-wrapper {
+  position: relative;
+
+  &.disabled {
+    pointer-events: none; // ❗ 禁止點擊
+    opacity: 0.5; // ❗ 灰階效果（可調整）
+
+    &::after {
+      content: "休息中";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.49); // 半透明遮罩
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
     }
   }
 }

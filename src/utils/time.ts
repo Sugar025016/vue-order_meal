@@ -28,7 +28,8 @@ export const formatMinutes = (mins: number) => {
   const m = mins % 60;
   const displayH = String(h % 24).padStart(2, "0");
   const displayM = String(m).padStart(2, "0");
-  return h >= 24 ? `隔日${displayH}:${displayM}` : `${displayH}:${displayM}`;
+  // return h >= 24 ? `隔日${displayH}:${displayM}` : `${displayH}:${displayM}`;
+  return  `${displayH}:${displayM}`;
 };
 
 export const formatTime = (today: Date) => {

@@ -8,13 +8,13 @@
 <!-- <script setup lang="ts"></script> -->
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 
-const authStore = useAuthStore()
+const userStore = useUserStore()
 
 onMounted(async () => {
-  if (authStore.hasToken) {
-    await authStore.getUser()
+  if (userStore.hasToken) {
+    await userStore.getUser()
   }
 })
 </script>

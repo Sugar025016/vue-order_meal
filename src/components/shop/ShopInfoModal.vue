@@ -106,8 +106,8 @@ const getTimeForTodayWeek = (week: number) => {
 
   // 轉換成時間字串或保留分鐘數
   return targetSchedules.map((s) => ({
-    start: formatMinutes(s.start_time),
-    end: formatMinutes(s.end_time),
+    start: formatMinutes(s.start_time-(week-1)*1440),
+    end: formatMinutes(s.end_time-(week-1)*1440),
     rawStart: s.start_time,
     rawEnd: s.end_time,
   }));

@@ -1,5 +1,6 @@
-import { Product } from './product';
-import { Shop } from './shop';
+import { Product } from "./product";
+import { Shop } from "./shop";
+import { Schedule } from "./schedule";
 
 export interface Cart {
   id: number;
@@ -22,6 +23,9 @@ export interface CartShop {
   shop_id: number;
   shop: Shop;
   cart_items: CartItem[];
+  is_orderable: boolean;
+  is_open: boolean;
+  schedules: Schedule[];
 }
 
 export interface CartItem {
@@ -34,10 +38,10 @@ export interface CartItem {
 }
 
 export interface AddCartRequest {
-  product_id: number
-  shop_id: number
-  qty: number
-  remark?: string
+  product_id: number;
+  shop_id: number;
+  qty: number;
+  remark?: string;
 }
 
 export interface UpdataCartRequest {

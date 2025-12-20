@@ -10,12 +10,12 @@ import {
   deleteCartItemApi,
 } from "@/api/cart";
 import { ElMessage } from "element-plus";
-import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 
 export const useCartShopStore = defineStore("cart", () => {
   const cartShops = ref<CartShop[]>([]);
   const cartShop = ref<CartShop|null>();
-  const userStore = useAuthStore();
+  const userStore = useUserStore();
 
   const loading = ref(false);
   const fetchCartShops = async () => {

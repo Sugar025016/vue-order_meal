@@ -17,21 +17,21 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/stores/auth";
 import { Heart } from "@vicons/ionicons5";
 
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
 const props = defineProps<{
   shopId: number;
 }>();
 
-const authStore = useAuthStore();
-
 let isFavorite = (shopId: number) => {
-  return authStore.user?.favoriteShopIds?.includes(shopId) ?? false;
+  return userStore.user?.favoriteShopIds?.includes(shopId) ?? false;
 };
 
 const toggleHeart = async (shopId: number) => {
-  await authStore.changeFavorite(shopId);
+  await userStore.changeFavorite(shopId);
 };
 </script>
 <style lang="scss" scoped>

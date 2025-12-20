@@ -25,8 +25,8 @@ import CartCard from "./CartCard.vue";
 import { useCartShopStore } from "@/stores/cart";
 
 const cartShopStore = useCartShopStore();
-
 const drawer = ref(false);
+
 
 const openProduct = () => {
   drawer.value = true;
@@ -46,7 +46,7 @@ onMounted(async () => {
   ::v-deep .el-drawer {
     .el-drawer__header {
       margin-bottom: 0;
-      .el-drawer__title{
+      .el-drawer__title {
         font-size: 20px;
         font-weight: 600;
       }

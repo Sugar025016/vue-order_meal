@@ -7,59 +7,25 @@ import {
   registerApi,
   verifyOtpApi,
   resendOtpApi,
+  verifyPasswordApi,
+  changePasswordApi,
 } from "@/api/auth";
-import { getUserApi } from "@/api/user";
-import {
-  type LoginRequest,
-  RegisterRequest,
-  User,
-  VerifyOtpRequest,
-} from "@/types/auth";
-import { changeFavoriteApi } from "@/api/favorite";
+import { type LoginRequest, PwdChangeRequest, RegisterRequest } from "@/types/auth";
+import { type User } from "@/types/user";
 import { useAddressStore } from "./address";
-// import { type User } from "@/types/user";
+import { useUserStore } from "./user";
 
 export const useAuthStore = defineStore("auth", () => {
   // const token = ref<string | null>(null);
-  const user = ref<User | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);
   const email = ref<string | null>(null);
   const token = ref<string | null>(localStorage.getItem("token"));
+  const isPasswordVerified = ref(false);
   const hasToken = computed(() => !!token.value);
   const addressStore = useAddressStore();
+  const userStore = useUserStore();
   const router = useRouter();
-  // let favoriteShopIds = computed(() => user.value?.favoriteShopIds ?? []);
-  // ✅ 取得使用者資料
-  const getUser = async (): Promise<User | null> => {
-    try {
-      const res = await getUserApi();
-
-      console.log("取得使用者資料:", res);
-      if (res.status && res.data) {
-        user.value = res.data;
-        router.push("/");
-      }
-      return null;
-    } catch (err: any) {
-      console.error("取得使用者資料失敗:", err);
-      return null;
-    }
-  };
-
-  const changeFavorite = async (shopId: number) => {
-    try {
-      const res = await changeFavoriteApi(shopId);
-      if (res.status && res.data) {
-        console.log("changeFavoriteApi:", res.data);
-        user.value!.favoriteShopIds = res.data;
-        return true;
-      }
-    } catch (err: any) {
-      console.error("取得使用者資料失敗:", err);
-    }
-    return false;
-  };
 
   // 登入方法
   const login = async (params: LoginRequest): Promise<User | null> => {
@@ -74,7 +40,7 @@ export const useAuthStore = defineStore("auth", () => {
       email.value = params.email;
       if (token.value) {
         localStorage.setItem("token", token.value);
-        return await getUser();
+        return await userStore.getUser();
       }
       return null;
     } catch (err: any) {
@@ -96,12 +62,11 @@ export const useAuthStore = defineStore("auth", () => {
   };
   // 登出方法
   const logout = async () => {
-    const router = useRouter();
     try {
       const res = await logoutApi();
       if (res.status) {
         // clear local state and storage
-        user.value = null;
+        await userStore.clearProFile();
         token.value = null;
         await addressStore.clearAddress();
         localStorage.removeItem("token");
@@ -159,7 +124,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (token.value) {
         localStorage.setItem("token", token.value);
-        return await getUser();
+        return await userStore.getUser();
       }
 
       console.log("驗證 OTP:+++++++", res);
@@ -190,8 +155,42 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const verifyPassword = async (password: string) => {
+    loading.value = true;
+    error.value = "";
+    try {
+      const res = await verifyPasswordApi(password);
+      isPasswordVerified.value = res.status;
+      console.log("verifyPasswordApi:", res);
+      return res;
+    } catch (err: any) {
+      error.value = err.response?.data?.message || "驗證密碼失敗";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const changePassword = async (
+    pwdChangeRequest: PwdChangeRequest
+  ) => {
+    loading.value = true;
+    error.value = "";
+    try {
+      const res = await changePasswordApi(pwdChangeRequest);
+      return res;
+    } catch (err: any) {
+      error.value = err.response?.data?.message || "更改密碼失敗";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+  const resetVerification = () => {
+    isPasswordVerified.value = false;
+  };
+
   return {
-    user,
     token,
     loading,
     error,
@@ -199,10 +198,11 @@ export const useAuthStore = defineStore("auth", () => {
     email,
     login,
     logout,
-    getUser,
-    changeFavorite,
     verifyOtp,
     register,
     sendOtp,
+    verifyPassword,
+    resetVerification,
+    changePassword,
   };
 });

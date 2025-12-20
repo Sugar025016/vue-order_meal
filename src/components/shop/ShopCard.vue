@@ -1,42 +1,45 @@
 <template>
-  <el-card
-    class="shop-card"
-    @click="toShop(shop.id)"
-    :body-style="{ padding: '0px' }"
-  >
-    <div class="shop-card_image">
-      <img
-        v-if="shop.image_path"
-        :src="shop.image_path"
-        alt="Your Image"
-        onerror="this.classList.add('no-image-label');"
-      />
-    </div>
-    <div class="shop-card_orderable" v-if="shop.is_orderable">
-      <!-- <span class="overlay-text">可線上</span>
-      <span class="overlay-text">訂購</span> -->
-      <img src="@/assets/images/plateOrder.png" alt="" />
-    </div>
-
-    <div class="shop-card__bottom">
-      <div class="shop-card__header">
-        <span class="shop-card__title"
-          >{{ shop.brand }} - {{ shop.branch }}</span
-        >
-        <ShopFavorite :shopId="props.shop.id" />
+  <div class="shop-card">
+    <el-card @click="toShop(shop.id)" :body-style="{ padding: '0px' }">
+      <div class="shop-card_image">
+        <img
+          v-if="shop.image_path"
+          :src="shop.image_path"
+          alt="Your Image"
+          onerror="this.classList.add('no-image-label');"
+        />
       </div>
-      <span class="shop-card__description">{{ shop.description }}</span>
-      <span class="shop-card__address">{{
-        shop.city + shop.area + shop.street + shop.detail
-      }}</span>
-    </div>
-  </el-card>
+      <div class="shop-card_orderable" v-if="shop.is_open && shop.is_orderable">
+        <!-- <span class="overlay-text">可線上</span>
+      <span class="overlay-text">訂購</span> -->
+        <img src="@/assets/images/plateOrder.png" alt="" />
+      </div>
+
+      <div class="shop-card__bottom">
+        <div class="shop-card__header">
+          <span class="shop-card__title"
+            >{{ shop.brand }} - {{ shop.branch }}</span
+          >
+          <ShopFavorite :shopId="props.shop.id" />
+        </div>
+        <span class="shop-card__description">{{ shop.description }}</span>
+        <span class="shop-card__address">{{
+          shop.city + shop.area + shop.street + shop.detail
+        }}</span>
+      </div>
+    </el-card>
+
+    <!-- <div class="shop-card__wrapper" v-if="!shop.is_open">休息中</div> -->
+
+    <!-- <div v-if="isDisabled" class="shop-card__wrapper">關閉中</div> -->
+  </div>
 </template>
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { Shop } from "@/types/shop";
 import ShopFavorite from "./ShopFavorite.vue";
-
+import { useShopSchedule } from "@/composables/useShopSchedule";
+import { computed } from "vue";
 
 const props = defineProps<{
   shop: Shop;
@@ -44,13 +47,16 @@ const props = defineProps<{
 
 let $router = useRouter();
 
-
-
 // var imageContainer = document.querySelector(".image-container");
 // var image = imageContainer?.querySelector("image_path");
 
 // image?.addEventListener("load", function () {
 //   imageContainer?.classList.add("loaded");
+// });
+
+// const { isOpenTime } = useShopSchedule(props.shop.schedules);
+// const isDisabled = computed(() => {
+//   return !isOpenTime.value || !props.shop.is_open;
 // });
 
 const toShop = (id: number) => {
@@ -61,6 +67,7 @@ const toShop = (id: number) => {
 .el-card {
   border-radius: 20px;
   overflow: visible;
+  height: 100%;
 }
 .el-card:hover {
   transform: scale(1.02); /* 鼠标悬停时放大 20% */
@@ -69,9 +76,9 @@ const toShop = (id: number) => {
   border-radius: 20px;
   cursor: pointer;
   position: relative;
-
   overflow: visible;
   display: inline-block;
+  position: relative;
   .shop-card_image {
     position: relative;
     max-width: 100%;
@@ -117,7 +124,7 @@ const toShop = (id: number) => {
     display: flex;
     // justify-content: center;
     align-items: center;
-    z-index: 100;
+    // z-index: 1000;
     img {
       width: 90px; /* 设置图片的宽度 */
       height: auto; /* 高度自动根据宽度和图片比例进行调整 */
@@ -163,6 +170,25 @@ const toShop = (id: number) => {
       color: #696969;
     }
   }
+}
+
+.shop-card__wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.336); /* 半透明灰 */
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  pointer-events: all; /* 阻擋卡片點擊 */
+  z-index: 101;
+  cursor: not-allowed;
 }
 </style>
 

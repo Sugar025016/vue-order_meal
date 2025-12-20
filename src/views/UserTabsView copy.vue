@@ -1,35 +1,36 @@
 <template>
   <div class="user-tabs">
     <div class="user-tabs__center">
+      {{activeTab}}
       <el-tabs
         v-model="activeTab"
         :tab-position="tabPosition"
         @tab-change="onTabChange"
+        scrollToActiveTab
       >
-        <el-tab-pane label="會員資料" name="profile">
+        <el-tab-pane label="會員資料" name="profile"
+          >1111111
+          <div>
+            {{ profile11 }}
+          </div>
           <keep-alive>
-            <component
-              v-show="activeTab === 'profile'"
-              :is="currentComponent"
-            />
+            <component v-if="activeTab === 'profile'" :is="Profile" />
           </keep-alive>
         </el-tab-pane>
 
         <el-tab-pane label="歷史訂單" name="order">
           <keep-alive>
-            <component v-show="activeTab === 'order'" :is="currentComponent" />
+            <component v-show="activeTab === 'order'" :is="Order" />
           </keep-alive>
         </el-tab-pane>
 
         <el-tab-pane label="收藏店家" name="favorite">
           <keep-alive>
-            <component
-              v-show="activeTab === 'favorite'"
-              :is="currentComponent"
-            />
+            <component v-show="activeTab === 'favorite'" :is="Favorite" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
+
     </div>
   </div>
 </template>
@@ -61,8 +62,8 @@ watch(
 );
 
 // tabs 切換 → 更新網址
-const onTabChange = (tabName = "profile") => {
-  // router.replace(`/user/${tabName}`);
+const onTabChange = (tabName) => {
+  router.push(`/user/${tabName}`);
 };
 
 // 動態決定顯示哪個元件
@@ -74,6 +75,8 @@ const currentComponent = computed(() => {
       return Order;
     case "favorite":
       return Favorite;
+    default:
+      return Profile;
   }
 });
 const updateTabPosition = () => {
@@ -122,16 +125,8 @@ onBeforeUnmount(() => {
         }
       }
 
-      :deep(.el-tabs__content) {
-        margin: 10px 0 0 0;
-      }
-      @media (max-width: $breakpoint-md) {
-      }
       @media (max-width: $breakpoint-md) {
         display: flex;
-        :deep(.el-tabs__content) {
-          margin: 0;
-        }
       }
     }
 

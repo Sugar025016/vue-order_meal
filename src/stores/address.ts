@@ -36,6 +36,7 @@ export const useAddressStore = defineStore("address", () => {
         addresses.value.unshift(currentAddress.value);
       }
       await shopStore.fetchShops();
+      console.log("---------shopStore.shops:", shopStore.shops);
       console.log("---------addresses:", addresses.value);
     } catch (error) {
       console.error("---------error:", error);
@@ -111,6 +112,9 @@ export const useAddressStore = defineStore("address", () => {
   const deleteAddress = async ($id: number) => {
     try {
       const response = await deleteAddressApi($id);
+      if(currentAddress.value?.id==$id){
+        currentAddress.value=null;
+      }
       await fetchAddresses();
       console.warn("刪除購物車成功:", response);
       return response.status;

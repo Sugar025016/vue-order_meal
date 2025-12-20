@@ -1,12 +1,12 @@
 <template>
   <div class="user-bar">
     <div class="user-bar__user">
-      <el-icon class="icon" v-if="authStore.user?.name"
+      <el-icon class="icon" v-if="userStore.user?.name"
         ><UserIcon class="svg-icon"
       /></el-icon>
-      <el-dropdown v-if="authStore.user?.name" style="cursor: pointer">
+      <el-dropdown v-if="userStore.user?.name" style="cursor: pointer">
         <span class="el-dropdown-link">
-          {{ authStore.user?.name }}
+          {{ userStore.user?.name }}
           <el-icon class="el-icon--right">
             <arrow-down />
           </el-icon>
@@ -33,31 +33,31 @@
 
     <div
       class="user-bar__item"
-      :class="{ shopCar: authStore.user?.account != '' }"
+      :class="{ shopCar: userStore.user?.account != '' }"
     >
       <el-link @click="openCartDrawer()" class="link" :underline="false">
-        <el-icon class="icon" v-if="authStore.user?.name"
+        <el-icon class="icon" v-if="userStore.user?.name"
           ><ShoppingBag class="svg-icon"
         /></el-icon>
         <span class="user-bar__count">
           {{
-            authStore.user?.cartShopCount == null
+            userStore.user?.cartShopCount == null
               ? 0
-              : authStore.user?.cartShopCount
+              : userStore.user?.cartShopCount
           }}
         </span>
       </el-link>
       <router-link
         :to="'/BuyOrder'"
         class="link"
-        v-if="authStore.user?.account"
+        v-if="userStore.user?.account"
       >
-        <el-icon class="icon order" v-if="authStore.user?.name"
+        <el-icon class="icon order" v-if="userStore.user?.name"
           ><Document class="svg-icon"
         /></el-icon>
         <span class="user-bar__count order-count">
           {{
-            authStore.user?.orderCount == null ? 0 : authStore.user?.orderCount
+            userStore.user?.orderCount == null ? 0 : userStore.user?.orderCount
           }}
         </span>
       </router-link>
@@ -87,6 +87,7 @@ import {
 } from "@element-plus/icons-vue";
 import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
 import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 import { useAddressStore } from "@/stores/address";
 
 const addressStore = useAddressStore();
@@ -102,6 +103,7 @@ function openCartDrawer() {
 }
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 
 const chooseAddressRef = ref<typeof ChooseAddressModel>();
 
@@ -112,34 +114,21 @@ const props = defineProps({
   isToolbarVisibleAll: Boolean,
 });
 
-const toLogin = () => {};
-
 const logout = async () => {
-  authStore.logout();
+  await authStore.logout();
 };
 
 const changeLink = async (to: string) => {
   // $router.push('/BuyMember/' + path + '/' + page)
   $router.push(to);
 };
-type Orders = any[]; // 🔹假型別（你有定義可以替換掉）
-let orderNew = ref<Orders>([]);
 const chooseAddressOpen = async () => {
   chooseAddressRef.value?.open();
 };
-const userStore = authStore.user;
-// const userStore = ref({
-//   account: "demo_account",
-//   username: "測試用戶",
-//   cartCount: 3,
-//   orderCount: 5,
-// });
-
 
 onMounted(async () => {
-  
   const need = await addressStore.checkNeedChooseAddress();
-  console.log("need:////////////",need )
+  console.log("need:////////////", need);
   if (need) {
     chooseAddressRef.value?.open();
   }

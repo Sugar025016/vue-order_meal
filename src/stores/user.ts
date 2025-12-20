@@ -1,25 +1,13 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import {
-  loginApi,
-  logoutApi,
-  registerApi,
-  verifyOtpApi,
-  resendOtpApi,
-} from "@/api/auth";
-import { getUserApi } from "@/api/user";
-import {
-  type LoginRequest,
-  RegisterRequest,
-  User,
-  VerifyOtpRequest,
-} from "@/types/auth";
+import { getUserApi, updateNameApi } from "@/api/user";
+import { type User } from "@/types/user";
 import { changeFavoriteApi } from "@/api/favorite";
 import { useAddressStore } from "./address";
 // import { type User } from "@/types/user";
 
-export const useAuthStore = defineStore("auth", () => {
+export const useUserStore = defineStore("user", () => {
   // const token = ref<string | null>(null);
   const user = ref<User | null>(null);
   const loading = ref(false);
@@ -61,6 +49,16 @@ export const useAuthStore = defineStore("auth", () => {
     return false;
   };
 
+  const clearProFile = async () => {
+    user.value = null;
+  };
+
+  const updateName = async (newName: string) => {
+    const res = await updateNameApi(newName);
+    if (res.status && user.value?.name) user.value.name = newName;
+    return res;
+  };
+
   return {
     user,
     token,
@@ -70,5 +68,7 @@ export const useAuthStore = defineStore("auth", () => {
     email,
     getUser,
     changeFavorite,
+    clearProFile,
+    updateName
   };
 });

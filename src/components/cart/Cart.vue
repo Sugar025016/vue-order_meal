@@ -22,7 +22,13 @@
           />
           <el-table-column prop="remark" label="備註" align="center" />
           <el-table-column prop="product.price" label="單價" align="center" />
-          <el-table-column prop="qty" label="數量" align="center" width="180" sortable>
+          <el-table-column
+            prop="qty"
+            label="數量"
+            align="center"
+            width="180"
+            sortable
+          >
             <template #default="scope">
               <el-input-number
                 v-model="scope.row.qty"
@@ -89,6 +95,7 @@ const $route = useRoute();
 const cartShopStore = useCartShopStore();
 import { ElMessageBox } from "element-plus";
 import { CartItem, UpdataCartRequest } from "@/types/cart";
+import { useShopSchedule } from "@/composables/useShopSchedule";
 
 let $router = useRouter();
 
@@ -164,6 +171,32 @@ const checkCartEmpty = () => {
   }
 };
 
+let isOpen = ref(true);
+
+if (cartShopStore.cartShop?.schedules) {
+  const schedule = useShopSchedule(cartShopStore.cartShop.schedules);
+  isOpen = schedule.isOpen; // 這會持續 reactive + 每分鐘更新
+}
+const checkIsOpen = () => {
+  const isDisabled = !isOpen.value ||
+    !cartShopStore.cartShop?.is_orderable ||
+    !cartShopStore.cartShop?.is_open;
+
+  if (isDisabled) {
+    clearTimeout(timer);
+    ElMessageBox.alert("商店關閉中，返回首頁", "購物車", {
+      confirmButtonText: "確定",
+    }).then(() => {
+      $router.push("/");
+    });
+
+    timer = setTimeout(() => {
+      ElMessageBox.close();
+      $router.push("/");
+    }, 5000);
+  }
+};
+
 async function fetchCartShopData() {
   await cartShopStore.fetchCartShop(parseInt($route.params.id as string));
 }
@@ -175,6 +208,7 @@ onMounted(async () => {
   }
   // console.log("cartShop 變更:2");
   checkCartEmpty();
+  checkIsOpen();
 });
 onBeforeUnmount(() => {
   clearTimeout(timer);
@@ -206,7 +240,7 @@ onBeforeUnmount(() => {
     display: grid; /* 使用CSS Grid布局 */
     grid-template-columns: minmax(720px, 9fr) minmax(180px, 3fr);
     gap: 10px;
-    flex:1;
+    flex: 1;
     min-height: 100%;
 
     .cart__table {
@@ -236,10 +270,10 @@ onBeforeUnmount(() => {
           background-color: #ffffff00 !important;
           .cell {
             .sort-caret.ascending {
-              border-bottom-color:  rgb(255, 39, 39) !important;
+              border-bottom-color: rgb(255, 39, 39) !important;
             }
             .sort-caret.descending {
-              border-top-color:  rgb(255, 39, 39) !important;
+              border-top-color: rgb(255, 39, 39) !important;
             }
           }
         }

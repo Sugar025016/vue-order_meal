@@ -7,7 +7,6 @@ import type {
   RegisterRequest,
   RegisterUserData,
   VerifyOtpRequest,
-  PwdChangeRequest,
 } from "@/types/auth";
 
 // Reuse User type from "@/types/user"
@@ -24,7 +23,6 @@ enum API {
   VERIFY_OTP_URL = "/verifyOtp",
   SEND_OTP_URL = "/sendOtp",
   VERIFY_PASSWORD_URL = "/verifyPassword",
-  CHANGE_PASSWORD_URL = "/password/change",
 }
 
 export const loginApi = (data: LoginRequest) =>
@@ -42,15 +40,6 @@ export const verifyOtpApi = (email: string, otp: string) =>
     otp,
   });
 
-export const resendOtpApi = (email: string) =>
-  request.post<any, ApiResponse<any>>(API.SEND_OTP_URL, { email });
-
 export const verifyPasswordApi = (password: string) =>
   request.post<any, ApiResponse<any>>(API.VERIFY_PASSWORD_URL, { password });
 
-export const changePasswordApi = (pwdChangeRequest: PwdChangeRequest) =>
-  request.put<any, ApiResponse<any>>(API.CHANGE_PASSWORD_URL, {
-    current_password: pwdChangeRequest.currentPassword,
-    new_password: pwdChangeRequest.newPassword,
-    new_password_confirmation: pwdChangeRequest.confirmPassword,
-  });
