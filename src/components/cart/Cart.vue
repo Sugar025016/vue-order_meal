@@ -58,6 +58,9 @@
         <span class="cart__total">總金額：</span>
         <span class="cart__total-data">NT${{ sum }}</span>
         <hr />
+        <!-- <span class="cart__total">最低外送金額：</span>
+        <span class="cart__total-data">NT${{ cartShopStore.cartShop?.shop.min_order_amount }}</span>
+        <hr /> -->
         <el-button
           type="warning"
           size="large"
@@ -95,7 +98,7 @@ const $route = useRoute();
 const cartShopStore = useCartShopStore();
 import { ElMessageBox } from "element-plus";
 import { CartItem, UpdataCartRequest } from "@/types/cart";
-import { useShopSchedule } from "@/composables/useShopSchedule";
+import { checkShopOpenTime } from "@/composables/useShopSchedule";
 
 let $router = useRouter();
 
@@ -171,17 +174,26 @@ const checkCartEmpty = () => {
   }
 };
 
-let isOpen = ref(true);
-
-if (cartShopStore.cartShop?.schedules) {
-  const schedule = useShopSchedule(cartShopStore.cartShop.schedules);
-  isOpen = schedule.isOpen; // 這會持續 reactive + 每分鐘更新
-}
+// const isOpenTime = ref(false);
+const isOpenTime = computed(() => {
+  // console.log("schedules-------------------:", cartShopStore.cartShop);
+  return checkShopOpenTime(cartShopStore.cartShop?.shop.schedules);
+});
+// const isOpenTime = computed<boolean>(() => {
+//   if (cartShopStore.cartShop?.schedules)
+//     return checkShopOpenTime(cartShopStore.cartShop?.schedules);
+// });
 const checkIsOpen = () => {
-  const isDisabled = !isOpen.value ||
-    !cartShopStore.cartShop?.is_orderable ||
-    !cartShopStore.cartShop?.is_open;
-
+  const isDisabled =
+    !isOpenTime.value ||
+    !cartShopStore.cartShop?.shop.is_orderable ||
+    !cartShopStore.cartShop?.shop.is_open;
+  console.log(
+    "isDisabled:",
+    isOpenTime.value,
+    cartShopStore.cartShop?.shop.is_orderable,
+    cartShopStore.cartShop?.shop.is_open
+  );
   if (isDisabled) {
     clearTimeout(timer);
     ElMessageBox.alert("商店關閉中，返回首頁", "購物車", {

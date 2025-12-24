@@ -1,5 +1,5 @@
 <template>
-  <div class="shop-view">
+  <div class="shop-view" :key="String($route.params.id)">
     <div class="header background">
       <ShopHead></ShopHead>
     </div>

@@ -14,7 +14,7 @@ import { useUserStore } from "@/stores/user";
 
 export const useCartShopStore = defineStore("cart", () => {
   const cartShops = ref<CartShop[]>([]);
-  const cartShop = ref<CartShop|null>();
+  const cartShop = ref<CartShop | null>();
   const userStore = useUserStore();
 
   const loading = ref(false);
@@ -41,7 +41,7 @@ export const useCartShopStore = defineStore("cart", () => {
       cartShop.value = response.data;
       console.log("購物車資料:", cartShop.value);
     } catch (error) {
-      console.error("購物車資料error:",error);
+      console.error("購物車資料error:", error);
       cartShop.value = null;
     } finally {
       loading.value = false;
@@ -52,7 +52,7 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       await addCartApi(payload);
 
-      await fetchCartShops(); // 更新購物車列表
+      // await fetchCartShops(); // 更新購物車列表
       console.warn("加入購物車成功:");
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
@@ -64,7 +64,7 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       const response = await deleteCartShopApi($id);
 
-      await fetchCartShops(); // 更新購物車列表
+      // await fetchCartShops(); // 更新購物車列表
       console.warn("刪除購物車成功:", response);
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
@@ -77,7 +77,7 @@ export const useCartShopStore = defineStore("cart", () => {
       const response = await deleteCartItemApi($id);
 
       console.warn("刪除購物車成功:", response);
-      await fetchCartShops(); // 更新購物車列表
+      // await fetchCartShops(); // 更新購物車列表
       await fetchCartShop($cartShopId);
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
@@ -94,7 +94,7 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       await updateCartApi($data, $cartItemId);
 
-      await fetchCartShops(); // 更新購物車列表
+      // await fetchCartShops(); // 更新購物車列表
       await fetchCartShop(cartShopId);
       console.warn("加入購物車成功:");
       ElMessage.success("購物車更新成功");

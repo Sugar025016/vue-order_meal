@@ -98,7 +98,7 @@ let memberModelOpen = ref(false);
 
 const cartDrawerRef = ref<InstanceType<typeof CartDrawer> | null>(null);
 function openCartDrawer() {
-  cartDrawerRef.value?.openProduct();
+  cartDrawerRef.value?.openCart();
   console.log("openCartDrawer");
 }
 

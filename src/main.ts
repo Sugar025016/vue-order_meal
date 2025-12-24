@@ -11,13 +11,13 @@ import "@/styles/reset.scss";
 
 // import 'virtual:svg-icons-register'
 // import 'leaflet/dist/leaflet.css'
-import zhCn from "element-plus/es/locale/lang/zh-cn"; // 引入 Element Plus 中文语言包
+import zhTw  from "element-plus/es/locale/lang/zh-tw"; // 引入 Element Plus 中文语言包
 
 const app = createApp(App);
 const pinia = createPinia()
 app.use(pinia); // 啟用 Pinia
 app.use(router); // 啟用 Vue Router
-app.use(ElementPlus, { locale: zhCn }); // 使用 Element Plus 並設置中文語言包
+app.use(ElementPlus, { locale: zhTw  }); // 使用 Element Plus 並設置中文語言包
 
 
 

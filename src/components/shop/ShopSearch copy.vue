@@ -9,7 +9,7 @@
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
-          v-model="selectedOptionCity"
+          v-model="selectedOption1"
           @change="changeCity"
         >
           <option selected value="-1">縣市</option>
@@ -29,13 +29,13 @@
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
-          v-model="selectedOptionArea"
+          v-model="selectedOption2"
           @change="changeArea"
         >
           <option selected value="">區域鄉鎮</option>
           <option
-            v-if="selectedOptionCity > -1"
-            v-for="area in address[selectedOptionCity].areas"
+            v-if="selectedOption1 > -1"
+            v-for="area in address[selectedOption1].areas"
             :key="area.areaName"
             :value="area.areaName"
             :label="area.areaName"
@@ -50,7 +50,7 @@
       <div class="home-search__custom-select-wrapper">
         <select
           class="home-search__custom-select"
-          v-model="selectedOptionCategory"
+          v-model="selectedOption3"
           @change="changeCategory"
         >
           <option value="0">全部</option>
@@ -90,16 +90,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import address from "@/utils/address.js";
 import { getCategory } from "@/api/category";
 import type { Categories } from "@/types/category";
 import type { ShopSearchRequest } from "@/types/shop";
 
 import { useShopStore } from "@/stores/shop";
+import { useAuthStore } from "@/stores/auth";
 import { useAddressStore } from "@/stores/address";
 
 const shopStore = useShopStore();
+const authStore = useAuthStore();
 const addressStore = useAddressStore();
 
 const categoryList = ref<Categories>([]);
@@ -122,63 +124,15 @@ const fetchCategory = async () => {
 const searchHistory = ["咖啡", "餐廳", "電影", "遊戲"];
 
 // 選擇器狀態
-
-const selectedOptionCity = computed<number>({
-  get() {
-    const city = shopStore.searchParams.city;
-    if (!city) return -1;
-
-    const index = address.findIndex((item) => item.cityName === city);
-
-    return index > -1 ? index : -1;
-  },
-  set(index) {
-    if (index === -1) {
-      shopStore.searchParams.city = null;
-      shopStore.searchParams.area = null; // 常見需求：換縣市清區域
-    } else {
-      shopStore.searchParams.city = address[index].cityName;
-      shopStore.searchParams.area = null;
-    }
-  },
-});
-
-// const selectedOptionArea = ref("");
-const selectedOptionArea = computed<string>({
-  get() {
-    return shopStore.searchParams.area ?? "";
-  },
-  set(value) {
-    shopStore.searchParams.area = value || null;
-  },
-});
-
-// const selectedOptionCategory = ref(0);
-const selectedOptionCategory = computed<number>({
-  get() {
-    return shopStore.searchParams.category || 0;
-  },
-  set(value) {
-    shopStore.searchParams.category = value !== 0 ? value : null;
-  },
-});
-
-// const searchText = ref("");
-
-const searchText = computed<string>({
-  get() {
-    return shopStore.searchParams.keyword || "";
-  },
-  set(value) {
-    shopStore.searchParams.keyword = value || null;
-  },
-});
-
+const selectedOption1 = ref(-1);
+const selectedOption2 = ref("");
+const selectedOption3 = ref(0);
+const searchText = ref("");
 const showHistory = ref(false);
 
 // 方法
 function changeCity() {
-  selectedOptionArea.value = "";
+  selectedOption2.value = "";
 }
 
 function changeArea() {
@@ -194,16 +148,28 @@ function handleInput() {
 }
 
 function search() {
-  shopStore.setSearchParams({
+  // if (searchText.value && !searchHistory.includes(searchText.value)) {
+  //   searchHistory.unshift(searchText.value);
+  // }
+  // showHistory.value = false;
+  const searchParams: ShopSearchRequest = {
     city:
-      selectedOptionCity.value > -1
-        ? address[selectedOptionCity.value].cityName
+      selectedOption1.value > -1
+        ? address[selectedOption1.value].cityName
         : null,
-    area: selectedOptionArea.value || null,
+    area: selectedOption2.value !== "" ? selectedOption2.value : null,
     category:
-      selectedOptionCategory.value !== 0 ? selectedOptionCategory.value : null,
-    keyword: searchText.value || null,
-  });
+      selectedOption3.value && selectedOption3.value !== 0
+        ? categoryList.value.find((c) => c.id === selectedOption3.value)?.id ||
+          null
+        : null,
+    keyword: searchText.value !== "" ? searchText.value : null,
+  };
+
+  //   const params: fetchShops = {
+  //   params: searchParams,
+  // };
+  shopStore.setSearchParams(searchParams);
 }
 
 function fillInput(history: string) {

@@ -114,6 +114,7 @@ declare module 'vue' {
     ShopProdoct: typeof import('./src/components/shop/ShopProdoct.vue')['default']
     ShopSchedule: typeof import('./src/components/shop/ShopSchedule.vue')['default']
     ShopSearch: typeof import('./src/components/shop/ShopSearch.vue')['default']
+    'ShopSearch copy': typeof import('./src/components/shop/ShopSearch copy.vue')['default']
     ShopShare: typeof import('./src/components/shop/ShopShare.vue')['default']
     ShopTime: typeof import('./src/components/shop/ShopTime.vue')['default']
     ShopTimeOption: typeof import('./src/components/shop/ShopTimeOption.vue')['default']

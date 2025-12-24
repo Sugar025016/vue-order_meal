@@ -29,7 +29,7 @@
       </div>
     </el-card>
 
-    <!-- <div class="shop-card__wrapper" v-if="!shop.is_open">休息中</div> -->
+    <div class="shop-card__wrapper" v-if="!shop.is_open">休息中</div>
 
     <!-- <div v-if="isDisabled" class="shop-card__wrapper">關閉中</div> -->
   </div>

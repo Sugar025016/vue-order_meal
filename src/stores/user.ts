@@ -26,7 +26,6 @@ export const useUserStore = defineStore("user", () => {
       console.log("取得使用者資料:", res);
       if (res.status && res.data) {
         user.value = res.data;
-        router.push("/");
       }
       return null;
     } catch (err: any) {

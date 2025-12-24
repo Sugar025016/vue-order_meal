@@ -27,13 +27,13 @@ import { useCartShopStore } from "@/stores/cart";
 const cartShopStore = useCartShopStore();
 const drawer = ref(false);
 
-
-const openProduct = () => {
+const openCart = async () => {
+  await cartShopStore.fetchCartShops();
   drawer.value = true;
 };
 
 defineExpose({
-  openProduct,
+  openCart,
 });
 
 onMounted(async () => {

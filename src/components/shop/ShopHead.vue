@@ -36,11 +36,11 @@
             class="shop-head__times"
           >
             <!-- 如果有營業時間 -->
-            <template v-if="getNowSchedule() !== null">
+            <template v-if="nowSchedule !== null">
               <span class="shop-head__open">營業中：</span>
               <span
-                >{{ minutesToTime(getNowSchedule().start_time) }} ~
-                {{ minutesToTime(getNowSchedule().end_time) }}</span
+                >{{ minutesToTime(nowSchedule.start_time) }} ~
+                {{ minutesToTime(nowSchedule.end_time) }}</span
               >
             </template>
 
@@ -49,32 +49,31 @@
               <span>開始營業時間：</span>
               <span
                 v-if="
-                  Math.trunc(getNextSchedule().start_time / 1440) + 1 !==
+                  Math.trunc(nextSchedule.start_time / 1440) + 1 !==
                   getTodayWeek()
                 "
               >
-                {{ weekNames[Math.trunc(getNextSchedule().start_time / 1440)] }}
+                {{ weekNames[Math.trunc(nextSchedule.start_time / 1440)] }}
               </span>
               <span>
-                {{ minutesToTime(getNextSchedule().start_time) }} ~
-                {{ minutesToTime(getNextSchedule().end_time) }}
+                {{ minutesToTime(nextSchedule.start_time) }} ~
+                {{ minutesToTime(nextSchedule.end_time) }}
               </span>
             </template>
-
-            <!-- <template v-if="getTimeForNow().length > 0">
-              <template v-for="(timePeriod, i) in getTimeForNow()" :key="i">
-                <span>
-                  {{ timePeriod.start }} ~ {{ timePeriod.end }}
-                  {{ i < getTimeForNow().length - 1 ? "," : "" }}
-                </span>
-              </template>
-            </template>
-            <template v-else>
-              <span>未設定營業時間</span>
-            </template> -->
             <div class="shop-head__more">
-              <ShopInfoModal
+              <!-- <ShopInfoModal
                 :schedules="shopStore.shop?.schedules"
+                :phone="shopStore.shop?.phone"
+                :name="shopStore.shop?.brand + ' - ' + shopStore.shop?.branch"
+                :address="
+                  shopStore.shop?.city +
+                  shopStore.shop?.area +
+                  shopStore.shop?.street +
+                  shopStore.shop?.detail
+                "
+              ></ShopInfoModal> -->
+              <ShopInfoModal
+                :schedules="mergeSchedules(shopStore.shop?.schedules)"
                 :phone="shopStore.shop?.phone"
                 :name="shopStore.shop?.brand + ' - ' + shopStore.shop?.branch"
                 :address="
@@ -102,7 +101,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import { LocationOutline } from "@vicons/ionicons5";
 
@@ -111,82 +110,19 @@ import { useShopStore } from "@/stores/shop";
 const shopStore = useShopStore();
 
 import ShopInfoModal from "./ShopInfoModal.vue";
-import { formatMinutes } from "@/utils/time";
-
 import FbLineShare from "@/components/globalComponents/FbLineShare.vue";
 import { CallConnecting20Regular, ClockAlarm20Regular } from "@vicons/fluent";
 import { useUserStore } from "@/stores/user";
 import ShopFavorite from "./ShopFavorite.vue";
+import {
+  getNowWeekMinutes,
+  getTodayWeek,
+  minutesToTime,
+  mergeSchedule,
+  mergeSchedules,
+} from "@/utils/time";
 
-const getTodayWeek = () => {
-  const today = new Date();
-  const day = today.getDay(); // JS: 0=星期日, 1=星期一...
-  return day === 0 ? 7 : day; // 將 0 (星期日) 轉成 7
-};
-
-const getOpenWeek = () => {
-  const now = new Date();
-  const nowMinutes =
-    now.getHours() * 60 + now.getMinutes() + (getTodayWeek() - 1) * 1440;
-  // 過濾指定 week 的 schedules
-  const targetSchedules = shopStore.shop?.schedules.filter(
-    (s) => s.start_time < nowMinutes && s.end_time > nowMinutes
-  );
-  if (!targetSchedules || targetSchedules.length === 0) {
-    return getTodayWeek();
-  }
-  return targetSchedules[0].week;
-};
-
-const minutesToTime = (minutes: number) => {
-  const minutesInDay = 1440;
-  minutes = minutes % minutesInDay; // 取得當天的分鐘數
-  const hrs = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return `${hrs.toString().padStart(2, "0")}:${mins
-    .toString()
-    .padStart(2, "0")}`;
-};
-
-// 取得指定 week time
-const getTimeForTodayWeek = () => {
-  if (!shopStore.shop?.schedules) return [];
-
-  // 過濾指定 week 的 schedules
-  const targetSchedules = shopStore.shop?.schedules.filter(
-    (s) => s.week === getOpenWeek()
-  );
-
-  // 轉換成時間字串或保留分鐘數
-  return targetSchedules.map((s) => ({
-    start: formatMinutes(s.start_time),
-    end: formatMinutes(s.end_time),
-    rawStart: s.start_time,
-    rawEnd: s.end_time,
-  }));
-};
-
-// 取得最近的營業時間
-// const getTimeForNow = () => {
-//   if (!shopStore.shop?.schedules) return [];
-
-//   const now = new Date();
-//   const nowMinutes =
-//     now.getHours() * 60 + now.getMinutes() + (getTodayWeek() - 1) * 1440;
-
-//   // 過濾指定 week 的 schedules
-//   const targetSchedules = shopStore.shop?.schedules.filter(
-//     (s) => s.start_time < nowMinutes && s.end_time > nowMinutes
-//   );
-
-//   // 轉換成時間字串或保留分鐘數
-//   return targetSchedules.map((s) => ({
-//     start: formatMinutes(s.start_time),
-//     end: formatMinutes(s.end_time),
-//     rawStart: s.start_time,
-//     rawEnd: s.end_time,
-//   }));
-// };
+const nowMinutes = getNowWeekMinutes();
 
 const userStore = useUserStore();
 
@@ -202,36 +138,32 @@ const weekNames = [
   "星期日",
 ];
 
-const getNowSchedule = () => {
-  if (!shopStore.shop?.schedules) return null;
-  const now = new Date();
-  const nowMinutes =
-    now.getHours() * 60 + now.getMinutes() + (getTodayWeek() - 1) * 1440;
+const nowSchedule = computed(() => {
+  if (!shopStore.shop?.schedules?.length) return null;
 
-  const targetSchedules = shopStore.shop?.schedules.filter(
-    (s) => s.start_time < nowMinutes && s.end_time > nowMinutes
-  );
-  return !targetSchedules || targetSchedules.length === 0
-    ? null
-    : targetSchedules[0];
-};
+  const schedule =
+    shopStore.shop.schedules.find(
+      (s) => s.start_time < nowMinutes && s.end_time > nowMinutes
+    ) ?? null;
+  if (!schedule) return null;
+  return mergeSchedule(schedule, shopStore.shop.schedules);
+});
 
-const getNextSchedule = () => {
-  if (!shopStore.shop?.schedules) return null;
-  const now = new Date();
-  const nowMinutes =
-    now.getHours() * 60 + now.getMinutes() + (getTodayWeek() - 1) * 1440;
+const nextSchedule = computed(() => {
+  if (!shopStore.shop?.schedules?.length) return null;
 
-  // 過濾還沒開始的 schedules
-  const upcomingSchedules = shopStore.shop?.schedules
+  const upcoming = shopStore.shop.schedules
     .filter((s) => s.start_time > nowMinutes)
-    .sort((a, b) => a.start_time - b.start_time); // 依開始時間排序
+    .sort((a, b) => a.start_time - b.start_time);
 
-  // 取最早的那個
-  return upcomingSchedules?.length > 0
-    ? upcomingSchedules[0]
-    : shopStore.shop?.schedules.sort((a, b) => a.start_time - b.start_time)[0];
-};
+  const upcomingLength = upcoming.length
+    ? upcoming[0]
+    : shopStore.shop.schedules
+        .slice()
+        .sort((a, b) => a.start_time - b.start_time)[0];
+
+  return mergeSchedule(upcomingLength, shopStore.shop.schedules);
+});
 
 // 初始化
 onMounted(() => {

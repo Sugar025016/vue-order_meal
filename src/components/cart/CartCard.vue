@@ -1,10 +1,11 @@
 <template>
+  <!-- <div class="cart-card-wrapper" > -->
   <div class="cart-card-wrapper" :class="{ disabled: isDisabled }">
     <div class="cart-card">
       <!-- <el-link
       class="cart-card__body"
       @click="toShop(props.cartShop.shop.id)"
-      :undefinedline="false"
+      :undefinedline="false" 
     > -->
       <div class="cart-card__body">
         <div class="cart-card__shop-info">
@@ -78,7 +79,8 @@ import { DeleteFilled, Plus } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { CartShop } from "@/types/cart";
 import { useCartShopStore } from "@/stores/cart";
-import { useShopSchedule } from "@/composables/useShopSchedule";
+import { checkShopOpenTime } from "@/composables/useShopSchedule";
+
 import { Schedule } from "@/types/schedule";
 import { computed } from "vue";
 
@@ -88,12 +90,36 @@ const props = defineProps<{
   cartShop: CartShop;
 }>();
 const schedules = props.cartShop.shop.schedules as Schedule[];
-const { isOpenTime } = useShopSchedule(schedules);
+
+// const check = (schedules: Schedule[]) => {
+//   if (!schedules || schedules.length === 0) return false;
+//   const now = new Date();
+
+//   const week = now.getDay(); // JS 0 = Sunday
+//   const weekMap = [7, 1, 2, 3, 4, 5, 6]; // JS → 系統
+//   const today = weekMap[week];
+
+//   const minutes = now.getHours() * 60 + now.getMinutes() + (today - 1) * 1440; // 現在時間的分鐘數
+
+//   const result = schedules.some((s) => {
+//     return s.start_time <= minutes && minutes < s.end_time;
+//   });
+
+//   return result;
+// };
+// const isOpenTime = check(schedules);
+
+const isOpenTime = computed(() => {
+  return checkShopOpenTime(schedules);
+});
 const isDisabled = computed(() => {
   return (
-    !isOpenTime.value || !props.cartShop.is_orderable || !props.cartShop.is_open
+    !isOpenTime.value ||
+    !props.cartShop.shop.is_orderable ||
+    !props.cartShop.shop.is_open
   );
 });
+
 let $router = useRouter();
 
 const toShop = (id: number) => {
