@@ -1,6 +1,6 @@
 <template>
   <!-- <div class="cart-card-wrapper" > -->
-  <div class="cart-card-wrapper" :class="{ disabled: isDisabled }">
+  <div class="cart-card-wrapper" :class="{ disabled: !props.cartShop.is_open }">
     <div class="cart-card">
       <!-- <el-link
       class="cart-card__body"
@@ -89,7 +89,7 @@ const cartShopStore = useCartShopStore();
 const props = defineProps<{
   cartShop: CartShop;
 }>();
-const schedules = props.cartShop.shop.schedules as Schedule[];
+// const schedules = props.cartShop.shop.schedules as Schedule[];
 
 // const check = (schedules: Schedule[]) => {
 //   if (!schedules || schedules.length === 0) return false;
@@ -109,16 +109,16 @@ const schedules = props.cartShop.shop.schedules as Schedule[];
 // };
 // const isOpenTime = check(schedules);
 
-const isOpenTime = computed(() => {
-  return checkShopOpenTime(schedules);
-});
-const isDisabled = computed(() => {
-  return (
-    !isOpenTime.value ||
-    !props.cartShop.shop.is_orderable ||
-    !props.cartShop.shop.is_open
-  );
-});
+// const isOpenTime = computed(() => {
+//   return checkShopOpenTime(schedules);
+// });
+// const isDisabled = computed(() => {
+//   return (
+//     !isOpenTime.value ||
+//     !props.cartShop.shop.is_orderable ||
+//     !props.cartShop.shop.is_open
+//   );
+// });
 
 let $router = useRouter();
 

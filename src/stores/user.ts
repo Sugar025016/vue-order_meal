@@ -27,7 +27,7 @@ export const useUserStore = defineStore("user", () => {
       if (res.status && res.data) {
         user.value = res.data;
       }
-      return null;
+      return res.status;
     } catch (err: any) {
       console.error("取得使用者資料失敗:", err);
       return null;

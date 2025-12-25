@@ -8,10 +8,7 @@
       title="商店-購物車"
     >
       <div>
-        <template
-          v-for="cartShop in cartShopStore.cartShops"
-          :key="cartShop.id"
-        >
+        <template v-for="cartShop in computedCartShops" :key="cartShop.id">
           <CartCard :cartShop="cartShop" />
         </template>
       </div>
@@ -20,9 +17,10 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import CartCard from "./CartCard.vue";
 import { useCartShopStore } from "@/stores/cart";
+import { checkShopOpenTime } from "@/composables/useShopSchedule";
 
 const cartShopStore = useCartShopStore();
 const drawer = ref(false);
@@ -31,6 +29,20 @@ const openCart = async () => {
   await cartShopStore.fetchCartShops();
   drawer.value = true;
 };
+
+const computedCartShops = computed(() => {
+  return cartShopStore.cartShops
+    .map((cartShop) => {
+      const openBySchedule = checkShopOpenTime(cartShop.shop.schedules);
+      return {
+        ...cartShop,
+        is_open: cartShop.shop.is_open && openBySchedule,
+      };
+    })
+    .sort((a, b) => {
+      return (b.is_open ? 1 : 0) - (a.is_open ? 1 : 0);
+    });
+});
 
 defineExpose({
   openCart,

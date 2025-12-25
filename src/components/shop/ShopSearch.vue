@@ -132,7 +132,8 @@ const selectedOptionCity = computed<number>({
 
     return index > -1 ? index : -1;
   },
-  set(index) {
+  set(value) {
+    const index = Number(value);
     if (index === -1) {
       shopStore.searchParams.city = null;
       shopStore.searchParams.area = null; // 常見需求：換縣市清區域
@@ -194,6 +195,7 @@ function handleInput() {
 }
 
 function search() {
+  console.log("searchText:", selectedOptionCity.value);
   shopStore.setSearchParams({
     city:
       selectedOptionCity.value > -1

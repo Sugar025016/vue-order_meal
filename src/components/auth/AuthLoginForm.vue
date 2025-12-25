@@ -71,12 +71,14 @@ import { User, Lock } from "@element-plus/icons-vue";
 import Captcha from "@/components/captcha/Captcha.vue";
 
 import { reactive, ref } from "vue";
-import { useAuthStore } from "@/modules/auth";
+import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
 import { LoginRequest } from "@/types/auth";
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 // import router from "@/router";
 let $router = useRouter();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
+const userStore = useUserStore();
 const loginForm = reactive({
   email: "ruby028016@gmail.com",
   password: "password",
@@ -99,18 +101,14 @@ const handleLogin = async () => {
   };
 
   try {
-    const user = await authStore.login(params);
-    // ✅ 登入成功，把 token 存 localStorage
-    if (user) {
-      console.log("登入成功，使用者資料:", user);
-      alert(`歡迎回來，${user.name}！`);
-
-      $router.push('/')
+    const isLogin = await authStore.login(params);
+    if (isLogin) {
+      alert(`歡迎回來，${userStore.user?.name}！`);
+      $router.push("/");
     } else {
       error.value = "登入失敗，請確認帳號密碼";
     }
   } catch (err: any) {
-    // Laravel 錯誤訊息會在 err.response.data
     error.value = err.response?.data?.message || "登入失敗";
   } finally {
     loading.value = false;

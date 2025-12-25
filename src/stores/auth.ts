@@ -124,7 +124,8 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (token.value) {
         localStorage.setItem("token", token.value);
-        return await userStore.getUser();
+         await userStore.getUser();
+        return null;
       }
 
       console.log("驗證 OTP:+++++++", res);
