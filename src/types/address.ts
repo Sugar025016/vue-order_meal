@@ -1,15 +1,17 @@
 // export type Addresses = Address[];
 
+
+
 export interface Address {
   id: number;
-  detail: string;
+  // address_data_id: number;
   lat: number;
   lng: number;
-  address_data_id: number;
-  user_id: number;
   city: string;
   area: string;
   street: string;
+  detail: string;
+  user_id: number;
 }
 
 export interface AddressRequest {

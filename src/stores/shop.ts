@@ -5,14 +5,17 @@ import { Shop } from "@/types/shop";
 import { getShopsApi, getShopApi } from "@/api/shop";
 import { ShopSearchRequest } from "@/types/shop";
 import { useAddressStore } from "@/stores/address";
+import { emptyShop } from '@/constants/emptyShop';
 
 export const useShopStore = defineStore("shop", () => {
   const addressStore = useAddressStore();
   // 資料列表
   const shops = ref<Shop[]>([]);
+  // 單一資料
+  // const shop = ref<Shop>(emptyShop);
   const shop = ref<Shop>();
   // 搜尋條件
-  const searchParams = ref<ShopSearchRequest>({});
+  const searchParams = ref<ShopSearchRequest>({}); 
   // loading 狀態
   const loading = ref(false);
 
@@ -23,9 +26,7 @@ export const useShopStore = defineStore("shop", () => {
       searchParams.value.lat = addressStore.currentAddress?.lat;
       searchParams.value.lng = addressStore.currentAddress?.lng;
     
-    
-    console.log("addressStore.currentAddress ------------:", addressStore.currentAddress);
-
+   
     try {
       const response = await getShopsApi(params || searchParams.value);
       shops.value = response.data;

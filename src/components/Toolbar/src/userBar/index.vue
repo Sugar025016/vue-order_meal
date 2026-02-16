@@ -7,7 +7,7 @@
       <el-dropdown v-if="userStore.user?.name" style="cursor: pointer">
         <span class="el-dropdown-link">
           {{ userStore.user?.name }}
-          <el-icon class="el-icon--right">
+          <el-icon class="el-icon__right">
             <arrow-down />
           </el-icon>
         </span>
@@ -62,6 +62,29 @@
         </span>
       </router-link>
     </div>
+    <!-- <div class="user-bar__pickup-mode">
+      <el-switch
+        v-model="pickupMode"
+        class="ml-2"
+        inline-prompt
+        style="--el-switch-on-color: #fd8928; --el-switch-off-color: #ff6969"
+        active-text="外送"
+        inactive-text="自取"
+        size="large"
+      />
+    </div> -->
+    <div class="user-bar__pickup-mode">
+      <el-switch
+        v-model="orderStore.deliveryType"
+        class="ml-2"
+        inline-prompt
+        active-text="外送"
+        inactive-text="自取"
+        :active-value="1"
+        :inactive-value="2"
+        size="large"
+      />
+    </div>
   </div>
 
   <!-- <SellOrderModal
@@ -89,8 +112,10 @@ import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/in
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import { useAddressStore } from "@/stores/address";
+import { useOrderStore } from "@/stores/order";
 
 const addressStore = useAddressStore();
+const orderStore = useOrderStore();
 let $router = useRouter();
 let $route = useRoute();
 let sellOrderModalOpen = ref(false);
@@ -109,6 +134,8 @@ const chooseAddressRef = ref<typeof ChooseAddressModel>();
 
 const path = window.location.hash;
 // $router.getRoutes()
+
+const pickupMode = ref(true);
 
 const props = defineProps({
   isToolbarVisibleAll: Boolean,
@@ -204,6 +231,22 @@ onMounted(async () => {
         border-radius: 50%;
         background-color: rgb(35, 130, 255);
       }
+    }
+  }
+
+  .user-bar__pickup-mode {
+    display: flex;
+    // align-self: flex-end;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5px;
+    .el-switch {
+      width: 100%;
+      height: auto;
+      --el-switch-off-color: #e35858;
+      --el-switch-on-color: #fd8928;
     }
   }
 }

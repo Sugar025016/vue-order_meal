@@ -19,7 +19,7 @@ export const useUserStore = defineStore("user", () => {
   const router = useRouter();
   // let favoriteShopIds = computed(() => user.value?.favoriteShopIds ?? []);
   // ✅ 取得使用者資料
-  const getUser = async (): Promise<User | null> => {
+  const getUser = async (): Promise<boolean> => {
     try {
       const res = await getUserApi();
 
@@ -30,7 +30,7 @@ export const useUserStore = defineStore("user", () => {
       return res.status;
     } catch (err: any) {
       console.error("取得使用者資料失敗:", err);
-      return null;
+      return err.response?.status || false;
     }
   };
 
@@ -68,6 +68,6 @@ export const useUserStore = defineStore("user", () => {
     getUser,
     changeFavorite,
     clearProFile,
-    updateName
+    updateName,
   };
 });

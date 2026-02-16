@@ -2,7 +2,7 @@
   <div class="dialog">
     <el-dialog
       v-model="chooseAddressModelOpen"
-      title="外送地址"
+      title="外送地址11"
       :before-close="handleClose"
       :close-on-click-modal="!chooseAddressModelOpen"
       :modal-append-to-body="false"

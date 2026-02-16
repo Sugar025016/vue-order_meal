@@ -57,7 +57,7 @@
           <div class="shop-info-modal__body-list-address layout">
             <div>
               <el-icon :size="20"><Location /></el-icon>
-              <span>營業區域：</span>
+              <span>營業地址：</span>
             </div>
 
             <div class="shop-info-modal__content">

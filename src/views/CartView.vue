@@ -3,11 +3,9 @@
     <div class="cart-view__cart">
       <Cart></Cart>
     </div>
-    <!-- <div class="buy-product-footer">1111111</div> -->
   </div>
 </template>
 <script setup lang="ts">
-import Products from "@/components/product/ProductTabs.vue";
 import Cart from "@/components/cart/Cart.vue";
 
 import { useShopStore } from "@/stores/shop";
@@ -36,7 +34,19 @@ onMounted(async () => {
     padding: var(--responsive-padding);
     padding-top: 20px;
     padding-bottom: 10px;
-}
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.068); // 白色變淡
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
 
   .buy-product-footer {
     padding: var(--responsive-padding);

@@ -9,6 +9,8 @@ import ShopView from "@/views/ShopView.vue";
 import TestApi from "@/views/TestApi.vue";
 import CartView from "@/views/CartView.vue";
 import UserTabsView from "@/views/UserTabsView.vue";
+import CheckoutView from "@/views/CheckoutView.vue";
+import OrderView from "@/views/OrderView.vue";
 
 const routes = [
   {
@@ -29,6 +31,8 @@ const routes = [
       { path: "/shop/:id", name: "shop", component: ShopView },
       { path: "/cart/:id", name: "cart", component: CartView },
       { path: "/user/:section", name: "user-section", component: UserTabsView },
+      { path: "/checkout/:id", name: "checkout", component: CheckoutView },
+      { path: "/order", name: "order", component: OrderView },
     ],
   },
 ];

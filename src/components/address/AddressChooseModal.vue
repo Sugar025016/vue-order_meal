@@ -2,7 +2,7 @@
   <div class="dialog">
     <el-dialog
       v-model="chooseAddressModelOpen"
-      title="外送地址"
+      title="外送地址11"
       :before-close="handleClose"
       :show-close="!chooseAddressModelOpen"
       :close-on-click-modal="!chooseAddressModelOpen"
@@ -117,6 +117,7 @@ import { useShopStore } from "@/stores/shop";
 import { useAddressStore } from "@/stores/address";
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user";
 
 const shopStore = useShopStore();
 const addressStore = useAddressStore();
@@ -135,7 +136,7 @@ const addAddress = async () => {
   addressRefs.value?.addShop();
 };
 const reviseAddress = async (address: Address) => {
-  if (address.id === userStore.address?.id && userStore.cartCount > 0) {
+  if (address.id === addressStore.currentAddress?.id && userStore.cartCount > 0) {
     await ElMessageBox.confirm(
       "外送地址變更，需要清空購物車，你確定要變更嗎？",
       "外送地址變更",

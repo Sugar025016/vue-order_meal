@@ -5,7 +5,7 @@
     </el-button>
 
     <!-- Step 1：密碼驗證 -->
-    <el-dialog v-model="passwordDialog" title="驗證密碼" width="420">
+    <el-dialog v-model="passwordDialog" title="請輸入密碼" width="420">
       <el-input
         v-model="password"
         type="password"
@@ -23,7 +23,7 @@
     </el-dialog>
 
     <!-- Step 2：更改名稱 -->
-    <el-dialog v-model="nameDialog" title="更改名稱" width="420">
+    <el-dialog v-model="nameDialog" title="請輸入你的新名稱" width="420">
       <el-input v-model="newName" placeholder="請輸入新的名稱" />
 
       <template #footer>

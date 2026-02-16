@@ -1,6 +1,12 @@
 <template>
   <!-- <div class="cart-card-wrapper" > -->
-  <div class="cart-card-wrapper" :class="{ disabled: !props.cartShop.is_open }">
+  <!-- <div class="cart-card-wrapper" :class="{ disabled: !props.cartShop.is_open }" > -->
+  <!-- <div class="cart-card-wrapper" :class="{ disabled: !props.cartShop.is_open }" :data-disabled-text="disabledText"> -->
+  <div
+    class="cart-card-wrapper"
+    :class="disabledClass"
+    :data-disabled-text="disabledText"
+  >
     <div class="cart-card">
       <!-- <el-link
       class="cart-card__body"
@@ -14,7 +20,7 @@
               v-if="props.cartShop.shop.image_path"
               :src="props.cartShop.shop.image_path"
               alt="Your Image"
-              onerror="this.classList.add('no-image-label');"
+              onerror="this.classList.add('no-image-label')"
             />
           </div>
           <div class="cart-card__cotent">
@@ -45,7 +51,7 @@
             <img
               :src="cartItem.product.image_path"
               alt="Your Image"
-              onerror="this.classList.add('no-image-label');"
+              onerror="this.classList.add('no-image-label')"
             />
             <template
               v-if="index === 4 && props.cartShop.cart_items.length > 5"
@@ -79,16 +85,32 @@ import { DeleteFilled, Plus } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { CartShop } from "@/types/cart";
 import { useCartShopStore } from "@/stores/cart";
-import { checkShopOpenTime } from "@/composables/useShopSchedule";
-
-import { Schedule } from "@/types/schedule";
 import { computed } from "vue";
 
 const cartShopStore = useCartShopStore();
-
 const props = defineProps<{
   cartShop: CartShop;
 }>();
+
+// const disabledText = "123"
+
+const disabledReason = computed(() => {
+  if (!props.cartShop.isDeliveryAvailable) return "too_far";
+  if (!props.cartShop.is_open) return "closed";
+  return null;
+});
+
+const disabledText = computed(() => {
+  if (disabledReason.value === "closed") return "休息中";
+  if (disabledReason.value === "too_far") return "距離太遠";
+  return "";
+});
+
+const disabledClass = computed(() => ({
+  disabled: !!disabledReason.value,
+  "disabled-closed": disabledReason.value === "closed",
+  "disabled-too-far": disabledReason.value === "too_far",
+}));
 // const schedules = props.cartShop.shop.schedules as Schedule[];
 
 // const check = (schedules: Schedule[]) => {
@@ -201,6 +223,7 @@ const deleteCart = (v: number) => {
     color: #ff4d4f;
     font-size: 24px;
     margin: 6px;
+    z-index: 100;
 
     .el-icon:hover {
       color: #ff312d;
@@ -289,21 +312,44 @@ const deleteCart = (v: number) => {
   }
 }
 
+// .cart-card-wrapper {
+//   position: relative;
+
+//   &.disabled {
+//     // pointer-events: none; // ❗ 禁止點擊
+//     opacity: 0.9; // ❗ 灰階效果（可調整）
+
+//     &::after {
+//       border-radius: 10px;
+//       content: "休息中";
+//       position: absolute;
+//       top: 0;
+//       left: 0;
+//       right: 0;
+//       bottom: 0;
+//       background: rgba(0, 0, 0, 0.31); // 半透明遮罩
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       color: white;
+//       font-size: 20px;
+//       font-weight: bold;
+//     }
+//   }
+// }
+
 .cart-card-wrapper {
   position: relative;
 
   &.disabled {
-    pointer-events: none; // ❗ 禁止點擊
-    opacity: 0.5; // ❗ 灰階效果（可調整）
+    opacity: 0.9;
 
     &::after {
-      content: "休息中";
+      border-radius: 10px;
+      content: attr(data-disabled-text);
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.49); // 半透明遮罩
+      inset: 0;
+      background: rgba(0, 0, 0, 0.31);
       display: flex;
       justify-content: center;
       align-items: center;

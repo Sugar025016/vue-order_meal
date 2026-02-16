@@ -20,10 +20,20 @@
 import { computed, onMounted, ref } from "vue";
 import CartCard from "./CartCard.vue";
 import { useCartShopStore } from "@/stores/cart";
-import { checkShopOpenTime } from "@/composables/useShopSchedule";
+import { useAddressStore } from "@/stores/address";
+import {
+  checkShopOpenTime,
+  calcDistanceKm,
+} from "@/composables/useShopSchedule";
+import { useOrderStore } from "@/stores/order";
+import { storeToRefs } from "pinia";
+import { Console } from "console";
 
 const cartShopStore = useCartShopStore();
+const addressStore = useAddressStore();
 const drawer = ref(false);
+const orderStore = useOrderStore();
+const { deliveryType } = storeToRefs(orderStore);
 
 const openCart = async () => {
   await cartShopStore.fetchCartShops();
@@ -34,13 +44,34 @@ const computedCartShops = computed(() => {
   return cartShopStore.cartShops
     .map((cartShop) => {
       const openBySchedule = checkShopOpenTime(cartShop.shop.schedules);
+      if (addressStore.currentAddress.id === 0) {
+        return {
+          ...cartShop,
+          is_open: cartShop.shop.is_open && openBySchedule,
+        };
+      }
+      const isDeliveryAvailable =
+        deliveryType.value === 2 ||
+        calcDistanceKm(
+          addressStore.currentAddress?.lat || 0,
+          addressStore.currentAddress?.lng || 0,
+          cartShop.shop.lat,
+          cartShop.shop.lng,
+        ) < cartShop.shop.delivery_km;
       return {
         ...cartShop,
         is_open: cartShop.shop.is_open && openBySchedule,
+        isDeliveryAvailable,
       };
     })
     .sort((a, b) => {
-      return (b.is_open ? 1 : 0) - (a.is_open ? 1 : 0);
+      if ((a as any).isDeliveryAvailable !== (b as any).isDeliveryAvailable) {
+        return (b as any).isDeliveryAvailable ? 1 : -1; // 可配送排前面
+      }
+      if (a.is_open !== b.is_open) {
+        return b.is_open ? 1 : -1; // 開店的排前面
+      }
+      return 0;
     });
 });
 

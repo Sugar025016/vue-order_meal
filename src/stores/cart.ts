@@ -11,10 +11,11 @@ import {
 } from "@/api/cart";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
+import { emptyCartShop } from "@/constants/emptyCartShop";
 
 export const useCartShopStore = defineStore("cart", () => {
   const cartShops = ref<CartShop[]>([]);
-  const cartShop = ref<CartShop | null>();
+  const cartShop = ref<CartShop>(emptyCartShop);
   const userStore = useUserStore();
 
   const loading = ref(false);
@@ -22,12 +23,14 @@ export const useCartShopStore = defineStore("cart", () => {
     loading.value = true;
     try {
       const response = await getCartsApi();
-      cartShops.value = response.data;
+      cartShops.value = response.data ?? [];
       if (userStore.user) {
         userStore.user.cartShopCount = cartShops.value.length;
       }
     } catch (error) {
-      console.error("---------error:", error);
+      cartShops.value = [];
+      // console.error("---------error:", error);
+      console.log("---------error:", error);
     } finally {
       loading.value = false;
     }
@@ -38,11 +41,9 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       const response = await getCartApi($id);
       console.log("購物車資料:", response);
-      cartShop.value = response.data;
-      console.log("購物車資料:", cartShop.value);
+      cartShop.value = response.data ?? emptyCartShop;
     } catch (error) {
-      console.error("購物車資料error:", error);
-      cartShop.value = null;
+      cartShop.value = emptyCartShop;
     } finally {
       loading.value = false;
     }
@@ -52,7 +53,7 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       await addCartApi(payload);
 
-      // await fetchCartShops(); // 更新購物車列表
+      await fetchCartShops(); // 更新購物車列表
       console.warn("加入購物車成功:");
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
@@ -64,6 +65,11 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       const response = await deleteCartShopApi($id);
 
+      if (cartShop.value.id == $id) {
+        cartShop.value = emptyCartShop;
+      }
+
+      await fetchCartShops(); // 更新購物車列表
       // await fetchCartShops(); // 更新購物車列表
       console.warn("刪除購物車成功:", response);
     } catch (err: any) {
@@ -76,9 +82,13 @@ export const useCartShopStore = defineStore("cart", () => {
     try {
       const response = await deleteCartItemApi($id);
 
+      await fetchCartShops(); // 更新購物車列表
       console.warn("刪除購物車成功:", response);
       // await fetchCartShops(); // 更新購物車列表
-      await fetchCartShop($cartShopId);
+
+      if (cartShop.value.id == $cartShopId) {
+        await fetchCartShop($cartShopId);
+      }
     } catch (err: any) {
       console.error("加入購物車發生錯誤:", err);
       // 可以視情況顯示提示訊息
@@ -89,13 +99,15 @@ export const useCartShopStore = defineStore("cart", () => {
   const updateCart = async (
     $data: UpdataCartRequest,
     $cartItemId: number,
-    cartShopId: number
+    $cartShopId: number
   ) => {
     try {
       await updateCartApi($data, $cartItemId);
 
       // await fetchCartShops(); // 更新購物車列表
-      await fetchCartShop(cartShopId);
+      if (cartShop.value.id === $cartShopId) {
+        await fetchCartShop($cartShopId);
+      }
       console.warn("加入購物車成功:");
       ElMessage.success("購物車更新成功");
     } catch (err: any) {

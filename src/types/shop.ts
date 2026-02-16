@@ -31,10 +31,14 @@ export interface Shop {
   is_open: boolean;
   image_path: string | null;
   address_data_id: number;
+  delivery_price: number;
   city: string;
   area: string;
   street: string;
   detail: string;
+  lat: number;
+  lng: number;
+  delivery_km: number;
   // products?: product[];
   tabs: Tab[];
   schedules: Schedule[];

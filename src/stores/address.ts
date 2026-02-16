@@ -13,13 +13,11 @@ import { AddressRequest, Address } from "@/types/address";
 import { useAuthStore } from "@/stores/auth";
 import { useShopStore } from "@/stores/shop";
 import { ElMessage } from "element-plus";
+import { emptyAddress } from "@/constants/emptyAddress";
 
 export const useAddressStore = defineStore("address", () => {
-  const address111 = ref<Address>();
-  const currentAddress = ref<Address | null>(null);
-  const currentAddressId = ref<number | null>();
+  const currentAddress = ref<Address>(emptyAddress);
   const addresses = ref<Address[]>([]);
-  const userStore = useAuthStore();
   const shopStore = useShopStore();
 
   const loading = ref(false);
@@ -29,19 +27,17 @@ export const useAddressStore = defineStore("address", () => {
     try {
       const response = await getAddressesApi();
       addresses.value = response.data.addresses;
-      currentAddress.value = response.data.currentAddress;
-      if (currentAddress.value) {
+      if (response.data.currentAddress !== null) {
+        currentAddress.value = response.data.currentAddress;
         const curr = currentAddress.value;
         addresses.value = addresses.value.filter((a) => a.id !== curr.id);
         addresses.value.unshift(currentAddress.value);
       }
+
       await shopStore.fetchShops();
-      console.log("---------shopStore.shops:", shopStore.shops);
-      console.log("---------addresses:", addresses.value);
     } catch (error) {
-      console.error("---------error:", error);
       addresses.value = [];
-      currentAddress.value = null;
+      currentAddress.value = emptyAddress;
     } finally {
       loading.value = false;
     }
@@ -63,7 +59,7 @@ export const useAddressStore = defineStore("address", () => {
 
   const createOrUpdateAddress = async (
     addressRequest: AddressRequest,
-    id: number | null
+    id: number | null,
   ) => {
     try {
       const response = await createOrUpdateAddressApi(addressRequest, id);
@@ -79,7 +75,7 @@ export const useAddressStore = defineStore("address", () => {
   };
 
   const clearAddress = async () => {
-    currentAddress.value = null;
+    currentAddress.value = emptyAddress;
     addresses.value = [];
   };
 
@@ -112,8 +108,8 @@ export const useAddressStore = defineStore("address", () => {
   const deleteAddress = async ($id: number) => {
     try {
       const response = await deleteAddressApi($id);
-      if(currentAddress.value?.id==$id){
-        currentAddress.value=null;
+      if (currentAddress.value.id === $id) {
+        currentAddress.value = emptyAddress;
       }
       await fetchAddresses();
       console.warn("刪除購物車成功:", response);
@@ -152,7 +148,6 @@ export const useAddressStore = defineStore("address", () => {
   };
 
   return {
-    address: address111,
     addresses,
     currentAddress,
     fetchAddresses,

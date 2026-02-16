@@ -21,7 +21,12 @@
             sortable
           />
           <el-table-column prop="remark" label="備註" align="center" />
-          <el-table-column prop="product.price" label="單價" align="center" />
+          <el-table-column
+            prop="product.price"
+            label="單價"
+            align="center"
+            sortable
+          />
           <el-table-column
             prop="qty"
             label="數量"
@@ -56,11 +61,16 @@
       </div>
       <div class="cart__footer">
         <span class="cart__total">總金額：</span>
-        <span class="cart__total-data">NT${{ sum }}</span>
+        <span class="cart__total_data">NT${{ sum }}</span>
         <hr />
-        <!-- <span class="cart__total">最低外送金額：</span>
-        <span class="cart__total-data">NT${{ cartShopStore.cartShop?.shop.min_order_amount }}</span>
-        <hr /> -->
+        <span class="cart__delivery_price">最低外送金額：</span>
+
+        <span class="cart__delivery_price_currency"
+          >NT$<span class="cart__delivery_price_data">{{
+            cartShopStore.cartShop?.shop.delivery_price
+          }}</span></span
+        >
+        <hr />
         <el-button
           type="warning"
           size="large"
@@ -104,9 +114,9 @@ let $router = useRouter();
 
 // const sum = ref(0);
 const sum = computed(() => {
-  return (cartShopStore.cartShop?.cart_items ?? []).reduce(
+  return (cartShopStore.cartShop.cart_items ?? []).reduce(
     (total, v) => total + v.qty * v.product.price,
-    0
+    0,
   );
 });
 
@@ -114,6 +124,24 @@ const updateCartRequest = ref<UpdataCartRequest>({
   qty: 1,
   remark: "",
 });
+
+const checkLink = () => {
+  const deliveryPrice = cartShopStore.cartShop.shop.delivery_price;
+
+  if (deliveryPrice > sum.value) {
+    ElMessageBox.confirm(
+      `未滿外送金額 ${deliveryPrice} 元，還差 ${
+        deliveryPrice - sum.value
+      } 元，購物去`,
+      "未滿外送金額",
+    ).then(() => {
+      // ✅ 只有按「確定」才會進來
+      $router.push("/shop/" + cartShopStore.cartShop.shop.id);
+    });
+  } else {
+    $router.push("/checkout/" + cartShopStore.cartShop.id);
+  }
+};
 
 const toShop = () => {
   if (cartShopStore.cartShop?.shop.id) {
@@ -130,7 +158,7 @@ const updateCart = (cartItems: CartItem) => {
   cartShopStore.updateCart(
     updateCartRequest.value,
     cartItems.id,
-    cartItems.cart_shop_id
+    cartItems.cart_shop_id,
   );
 };
 
@@ -158,18 +186,15 @@ const getElMessageBox = () => {
 watch(
   () => cartShopStore.cartShop,
   (newVal) => {
-    if (!newVal || !newVal.shop) {
+    if (!newVal || !newVal.shop || newVal.cart_items.length === 0) {
       getElMessageBox();
     }
-  }
+  },
 );
 
 const checkCartEmpty = () => {
   console.log("取得商店資料3");
-  if (
-    !cartShopStore.cartShop ||
-    cartShopStore.cartShop.cart_items.length === 0
-  ) {
+  if (cartShopStore.cartShop.id === 0) {
     getElMessageBox();
   }
 };
@@ -177,7 +202,7 @@ const checkCartEmpty = () => {
 // const isOpenTime = ref(false);
 const isOpenTime = computed(() => {
   // console.log("schedules-------------------:", cartShopStore.cartShop);
-  return checkShopOpenTime(cartShopStore.cartShop?.shop.schedules);
+  return checkShopOpenTime(cartShopStore.cartShop.shop.schedules);
 });
 // const isOpenTime = computed<boolean>(() => {
 //   if (cartShopStore.cartShop?.schedules)
@@ -186,14 +211,9 @@ const isOpenTime = computed(() => {
 const checkIsOpen = () => {
   const isDisabled =
     !isOpenTime.value ||
-    !cartShopStore.cartShop?.shop.is_orderable ||
-    !cartShopStore.cartShop?.shop.is_open;
-  console.log(
-    "isDisabled:",
-    isOpenTime.value,
-    cartShopStore.cartShop?.shop.is_orderable,
-    cartShopStore.cartShop?.shop.is_open
-  );
+    !cartShopStore.cartShop.shop.is_orderable ||
+    !cartShopStore.cartShop.shop.is_open;
+
   if (isDisabled) {
     clearTimeout(timer);
     ElMessageBox.alert("商店關閉中，返回首頁", "購物車", {
@@ -218,7 +238,6 @@ onMounted(async () => {
   if (typeof id === "string") {
     await fetchCartShopData();
   }
-  // console.log("cartShop 變更:2");
   checkCartEmpty();
   checkIsOpen();
 });
@@ -232,7 +251,8 @@ onBeforeUnmount(() => {
   display: block;
   overflow: hidden;
   margin: auto;
-  min-height: 100%;
+  height: auto;
+  min-height: 0;
 
   .cart__header {
     display: flex;
@@ -253,13 +273,14 @@ onBeforeUnmount(() => {
     grid-template-columns: minmax(720px, 9fr) minmax(180px, 3fr);
     gap: 10px;
     flex: 1;
-    min-height: 100%;
-
+    min-height: 0;
+    overflow-y: auto;
     .cart__table {
-      max-height: 400px;
+      // max-height: 100%;
       overflow-y: auto;
-      margin-bottom: 20px;
-      height: 400;
+      // margin-bottom: 20px;
+      min-height: calc(100vh - 500px);
+      max-height: calc(100vh - 400px);
 
       /* 改內容列背景 */
       :deep(.el-table) {
@@ -321,11 +342,28 @@ onBeforeUnmount(() => {
         margin: 0 0 5px 10px;
         color: #1e1e1e;
       }
-      .cart__total-data {
+      .cart__total_data {
         font-size: 38px;
         margin: 0 0 0 10px;
         color: #202020;
       }
+
+      .cart__delivery_price {
+        font-size: 22px;
+        margin: 10px 0 5px 10px;
+        color: #202020;
+      }
+      .cart__delivery_price_currency {
+        font-size: 26px;
+        margin: 0 0 5px 10px;
+        color: #202020;
+        .cart__delivery_price_data {
+          font-size: 28px;
+          margin-left: 6px;
+          color: #ff0000;
+        }
+      }
+
       button {
         margin: 5px 0;
         background-color: $color;
@@ -353,6 +391,9 @@ onBeforeUnmount(() => {
       }
       .el-col:first-child {
         margin: 10px;
+      }
+      .cart__table {
+        max-height: calc(100vh - 200px);
       }
     }
   }

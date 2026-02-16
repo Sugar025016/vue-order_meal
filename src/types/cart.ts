@@ -26,6 +26,7 @@ export interface CartShop {
   is_orderable: boolean;
   is_open: boolean;
   schedules: Schedule[];
+  isDeliveryAvailable: boolean;
 }
 
 export interface CartItem {

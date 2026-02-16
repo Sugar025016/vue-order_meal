@@ -19,6 +19,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^24.2.1",
     "@vicons/carbon": "^0.13.0",
     "@vicons/fluent": "^0.13.0",

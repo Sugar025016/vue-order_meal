@@ -15,7 +15,6 @@ request.interceptors.request.use(
     // 假設你有 token
     const token = localStorage.getItem("token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    console.log("Request token:", token);
     return config;
   },
   (error) => Promise.reject(error)
