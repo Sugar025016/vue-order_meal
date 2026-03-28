@@ -10,8 +10,17 @@
     <div class="checkout__body">
       <el-row :gutter="20">
         <div class="el-col">
+          {{
+            orderDate && orderTime
+              ? "預約時間：" + addOrderRequest.scheduled_time
+              : ""
+          }}
+          {{ addOrderRequest.scheduled_time }}
+          {{ orderDate }}
+          {{ selectedDateTime }}
           <div class="order_check date-time-item">
             <span v-if="orderStore.deliveryType === 1">外送時間：</span>
+
             <span v-else>自取時間：</span>
             <div class="item date-time">
               <el-radio-group v-model="addOrderRequest.order_type">
@@ -71,15 +80,15 @@
               <el-radio-group v-model="addOrderRequest.pay_method">
                 <el-radio :value="1">現金</el-radio>
                 <el-radio :value="2">信用卡</el-radio>
-                <el-radio value="3">LINE Pay</el-radio>
+                <el-radio :value="3">LINE Pay</el-radio>
               </el-radio-group>
             </div>
 
             <div class="checkout__need-cutlery">
               <span>需要餐具：</span>
               <el-radio-group v-model="addOrderRequest.is_cutlery">
-                <el-radio value="1" size="large" border>需要</el-radio>
-                <el-radio value="2" size="large" border>不需要</el-radio>
+                <el-radio :value="true" size="large" border>需要</el-radio>
+                <el-radio :value="false" size="large" border>不需要</el-radio>
               </el-radio-group>
             </div>
           </div>
@@ -149,12 +158,12 @@ import { addOrderApi } from "@/api/order";
 import { useOrderStore } from "@/stores/order";
 import { calcDistanceKm } from "@/composables/useShopSchedule";
 import { ElMessageBox } from "element-plus";
-import { emptyOrder } from "@/constants/emptyOrder";
+import { emptyAddOrder } from "@/constants/emptyOrder";
 
 const $route = useRoute();
 
 const addOrderRequest = reactive<AddOrderRequest>({
-  ...emptyOrder,
+  ...emptyAddOrder,
 });
 
 const orderDate = ref<Date | null>(null);
@@ -220,7 +229,26 @@ const sendOrder = async () => {
   // addOrderRequest.pay_method = addOrderRequest.pay_method.value;
   // addOrderRequest.is_cutlery = is_cutlery.value === "1";
   // addOrderRequest.customer_note = note.value || null;
-  addOrderRequest.estimated_delivery_time
+  console.log("addOrderRequest", addOrderRequest);
+  console.log("orderDate.value", orderDate.value);
+  console.log("orderTime.value", orderTime.value);
+  console.log("selectedDateTime.value", selectedDateTime.value);
+  if (addOrderRequest.order_type === 2 && !selectedDateTime.value) {
+    ElMessageBox.confirm(
+      `您尚未選擇預約時間，是否要以立即取餐送出訂單？`,
+      "確認送出",
+    ).then(() => {
+      addOrderRequest.scheduled_time = null;
+      addOrderRequest.estimated_delivery_time = null;
+      sendOrder();
+    });
+    return;
+  } else {
+    addOrderRequest.scheduled_time = selectedDateTime.value
+      ? selectedDateTime.value.toISOString().slice(0, 19).replace("T", " ")
+      : null;
+    addOrderRequest.estimated_delivery_time = null;
+  }
   if (!isDeliveryAvailable.value) {
     ElMessageBox.confirm(
       `外送距離太遠 無法送達，請重新選擇地址`,
@@ -236,7 +264,7 @@ const sendOrder = async () => {
 
   if (response?.status) {
     // router.push("/order/" + response.data.id)
-    router.push("/user/order/" + response.data.id);
+    router.push("/orders/" + response.data.orderNumber);
   }
 };
 

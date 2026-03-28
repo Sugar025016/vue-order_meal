@@ -43,7 +43,10 @@ onMounted(async () => {
 .el-header {
   background-color: #ffffff;
   height: 72px;
-  box-shadow: 3px 3px 5px #ffffff94, -3px -3px 5px #ffffffaf;
+  // box-shadow: 3px 3px 5px #ffffff94, -3px -3px 5px #ffffffaf;
+  box-shadow: 
+  3px 3px 8px rgba(0, 0, 0, 0.12),
+  -3px -3px 8px rgba(255, 255, 255, 0.9);
   padding: var(--responsive-padding);
   padding-top: 3px;
   padding-bottom: 0;

@@ -41,7 +41,7 @@ import { useRoute, useRouter } from "vue-router";
 import type { TabsInstance } from "element-plus";
 
 import Profile from "@/components/user/Profile.vue";
-import Order from "@/components/user/Order.vue";
+import Order from "@/components/user/OrderList.vue";
 import Favorite from "@/components/user/Favorite.vue";
 
 const route = useRoute();

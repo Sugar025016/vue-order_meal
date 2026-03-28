@@ -5,7 +5,7 @@
         ><UserIcon class="svg-icon"
       /></el-icon>
       <el-dropdown v-if="userStore.user?.name" style="cursor: pointer">
-        <span class="user-bar__el-dropdown-link">
+        <span class="el-dropdown-link">
           {{ userStore.user?.name }}
           <el-icon class="el-icon__right">
             <arrow-down />
@@ -31,29 +31,48 @@
       </el-dropdown>
     </div>
 
-    <el-link @click="openCartDrawer()" class="link" :underline="false">
-      <el-icon class="icon" v-if="userStore.user?.name"
-        ><ShoppingBag class="svg-icon"
-      /></el-icon>
-      <span class="user-bar__count">
-        {{
-          userStore.user?.cartShopCount == null
-            ? 0
-            : userStore.user?.cartShopCount
-        }}
-      </span>
-    </el-link>
-    <router-link :to="'/user/order'" class="link" v-if="userStore.user?.name">
-      <el-icon class="icon order" v-if="userStore.user?.name"
-        ><Document class="svg-icon"
-      /></el-icon>
-      <span class="user-bar__count order-count">
-        {{
-          orderStore?.ordersCount == null ? 0 : orderStore?.ordersCount
-        }}
-      </span>
-    </router-link>
-
+    <div
+      class="user-bar__item"
+      :class="{ shopCar: userStore.user?.account != '' }"
+    >
+      <el-link @click="openCartDrawer()" class="link" :underline="false">
+        <el-icon class="icon" v-if="userStore.user?.name"
+          ><ShoppingBag class="svg-icon"
+        /></el-icon>
+        <span class="user-bar__count">
+          {{
+            userStore.user?.cartShopCount == null
+              ? 0
+              : userStore.user?.cartShopCount
+          }}
+        </span>
+      </el-link>
+      <router-link
+        :to="'/BuyOrder'"
+        class="link"
+        v-if="userStore.user?.name"
+      >
+        <el-icon class="icon order" v-if="userStore.user?.name"
+          ><Document class="svg-icon"
+        /></el-icon>
+        <span class="user-bar__count order-count">
+          {{
+            userStore.user?.orderCount == null ? 0 : userStore.user?.orderCount
+          }}
+        </span>
+      </router-link>
+    </div>
+    <!-- <div class="user-bar__pickup-mode">
+      <el-switch
+        v-model="pickupMode"
+        class="ml-2"
+        inline-prompt
+        style="--el-switch-on-color: #fd8928; --el-switch-off-color: #ff6969"
+        active-text="外送"
+        inactive-text="自取"
+        size="large"
+      />
+    </div> -->
     <div class="user-bar__pickup-mode">
       <el-switch
         v-model="orderStore.deliveryType"
@@ -136,7 +155,6 @@ const chooseAddressOpen = async () => {
 
 onMounted(async () => {
   const need = await addressStore.checkNeedChooseAddress();
-  orderStore.getProcessingOrdersCount();
   console.log("need:////////////", need);
   if (need) {
     chooseAddressRef.value?.open();
@@ -155,8 +173,6 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   position: relative;
-  gap: 15px;
-
   .user-bar__user {
     display: flex;
     align-items: center;
@@ -164,7 +180,7 @@ onMounted(async () => {
     color: #e32828;
     .el-dropdown {
       height: 15px;
-      .user-bar__el-dropdown-link {
+      .el-dropdown-link {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -173,55 +189,55 @@ onMounted(async () => {
     }
   }
 
-  // .user-bar__item {
-  //   display: flex;
-  //   justify-content: center;
-  //   align-items: center;
-  //   height: 100%;
-  span {
-    // font-size: 16px;
-    font-weight: 800;
-  }
-  .link {
+  .user-bar__item {
     display: flex;
     justify-content: center;
     align-items: center;
-    text-decoration: none;
-    width: 100%;
     height: 100%;
-    position: relative;
-    margin-right: 10px;
-    // width: 60px;
-    .user-bar__count {
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 0px;
+    span {
+      // font-size: 16px;
+      font-weight: 800;
+    }
+    .link {
       display: flex;
       justify-content: center;
       align-items: center;
-      right: -10px;
-      top: 8px;
-      background-color: $color;
-      font-size: 18px;
-      color: white;
-    }
+      text-decoration: none;
+      width: 100%;
+      height: 100%;
+      position: relative;
 
-    .order {
-      color: rgb(35, 130, 255);
-    }
-    .order-count {
-      border-radius: 50%;
-      background-color: rgb(35, 130, 255);
+      width: 60px;
+      .user-bar__count {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        right: 6px;
+        top: 8px;
+        background-color: $color;
+        font-size: 18px;
+        color: white;
+      }
+
+      .order {
+        color: rgb(35, 130, 255);
+      }
+      .order-count {
+        border-radius: 50%;
+        background-color: rgb(35, 130, 255);
+      }
     }
   }
-  // }
 
   .user-bar__pickup-mode {
     display: flex;
     // align-self: flex-end;
-    // margin-left: 10px;
+    margin-left: 10px;
     display: flex;
     align-items: center;
     justify-content: center;

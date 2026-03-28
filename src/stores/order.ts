@@ -1,25 +1,97 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { CartShop, AddCartRequest, UpdataCartRequest } from "@/types/cart";
 
-import { addOrderApi } from "@/api/order";
+import {
+  addOrderApi,
+  getOrderActiveApi,
+  getOrderApi,
+  getOrderCountApi,
+  getOrderHistoryApi,
+} from "@/api/order";
 
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
-import { emptyCartShop } from "@/constants/emptyCartShop";
-import { AddOrderRequest } from "@/types/order";
+import { AddOrderRequest, Order, OrderHistory } from "@/types/order";
+import { emptyOrder } from "@/constants/emptyOrder";
+import { Paginated } from "@/types/response";
 
 export const useOrderStore = defineStore("order", () => {
-  const cartShops = ref<CartShop[]>([]);
-  const cartShop = ref<CartShop>(emptyCartShop);
+  const orders = ref<Order[]>([]);
+  const OrderHistory = ref<Paginated<Order>>({
+    data: [],
+    current_page: 0,
+    last_page: 0,
+    per_page: 0,
+    total: 0,
+  });
+  const OrderActive = ref<Order[]>([]);
+
+  const order = ref<Order>(emptyOrder);
   const userStore = useUserStore();
+  const ordersCount = ref<number>(0);
 
   const loading = ref(false);
   const deliveryType = ref<1 | 2>(1); // 1: 外送, 2: 自取
 
+  const ProcessingOrdersCount = ref(0);
+
   //   const setDelivertType  = (type: 1 | 2) => {
   //     delivery_type.value = type;
   //   }
+
+  const getProcessingOrdersCount = async () => {
+    try {
+      const response = await getOrderCountApi();
+      console.log("店家資料-order count:", response);
+      ordersCount.value = response.data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const fetchOrder = async ($orderNumber: string) => {
+    loading.value = true;
+    try {
+      const response = await getOrderApi($orderNumber);
+      console.log("店家資料:", response);
+      order.value = response.data;
+      console.log("店家資料:", order.value);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const getOrderActive = async () => {
+    loading.value = true;
+    try {
+      const response = await getOrderActiveApi();
+      console.log("店家資料:", response);
+      OrderActive.value = response.data;
+      console.log("店家資料:", OrderActive.value);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
+  
+  const getOrderHistory = async (page = 1, per_page = 20) => {
+    loading.value = true;
+    try {
+      const response = await getOrderHistoryApi({ page, per_page });
+      console.log("店家資料:", response);
+      OrderHistory.value = response.data;
+      console.log("店家資料:", OrderHistory.value);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      loading.value = false;
+    }
+  };
 
   const createOrder = async (
     $cartShopId: number,
@@ -61,5 +133,13 @@ export const useOrderStore = defineStore("order", () => {
   return {
     createOrder,
     deliveryType,
+    fetchOrder,
+    order,
+    getProcessingOrdersCount,
+    ordersCount,
+    getOrderHistory,
+    OrderHistory,
+    getOrderActive,
+    OrderActive,
   };
 });

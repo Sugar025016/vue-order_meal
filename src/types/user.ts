@@ -11,4 +11,5 @@ export interface User {
   current_address?: Address;
   favoriteShopIds: number[];
   cartShopCount: number;
+  ordersCount: number;
 }

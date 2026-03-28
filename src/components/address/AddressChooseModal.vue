@@ -90,7 +90,8 @@ import { user, token, loading, error, login, logout } from "@/stores/auth";
 // } from "@/api/user";
 import { ElMessage } from "element-plus";
 
-import EditAddressModal from "@/components/Buy/BuyCheck/src/editAddressModal.vue";
+import EditAddressModal from "@/components/Toolbar/src/toolbarChooseAddress/editAddressModal.vue";
+// import EditAddressModal from "@/components/Buy/BuyCheck/src/editAddressModal.vue";
 /**
  * Local type definitions to avoid missing '@/types' module.
  * These provide the minimal fields used by this component.

@@ -1,6 +1,6 @@
 // src/api/user.ts
 
-import type { User } from "@/types/auth";
+import type { User } from "@/types/user";
 import type { ApiResponse } from "@/types/response";
 import request from "./request";
 
