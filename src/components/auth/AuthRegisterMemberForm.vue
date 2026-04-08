@@ -1,11 +1,11 @@
 <template>
-  <div class="register-member">
-    <span class="table-title">註冊帳號</span>
+  <div class="auth-register-member-rorm">
+    <span class="auth-register-member-rorm__title">註冊帳號</span>
     <el-form ref="formRef" label-width="auto" label-position="top">
       <el-form-item prop="name" label="名稱：" size="large">
         <el-input
           :prefix-icon="User"
-          v-model="registerMember.name"
+          v-model="registerRequest.name"
           clearable
           placeholder="name"
           size="large"
@@ -14,7 +14,7 @@
       </el-form-item>
       <el-form-item prop="account" label="帳號(信箱)：" size="large">
         <el-input
-          v-model="registerMember.account"
+          v-model="registerRequest.email"
           size="large"
           placeholder="Email"
           :prefix-icon="Message"
@@ -27,7 +27,7 @@
           type="password"
           :prefix-icon="Lock"
           show-password
-          v-model="registerMember.password"
+          v-model="registerRequest.password"
           size="large"
           placeholder="Password"
           clearable
@@ -38,7 +38,7 @@
           type="password"
           :prefix-icon="Lock"
           show-password
-          v-model="registerMember.passwordCheck"
+          v-model="registerRequest.password_confirmation"
           size="large"
           placeholder="Password"
           clearable
@@ -49,13 +49,13 @@
         class="custom-form-item"
         label="驗證碼："
         size="large"
-        v-model="registerMember.verifyCode"
+        v-model="registerRequest.captcha"
       >
-        <AuthCaptcha ref="captchaRef"></AuthCaptcha>
+        <Captcha ref="captchaRef"></Captcha>
       </el-form-item>
     </el-form>
     <!-- <el-checkbox v-model="checked1" label="Option 1" size="large" /> -->
-    <el-button size="large" type="primary" round @click="save()">
+    <el-button size="large" type="primary" round @click="save">
       確認
     </el-button>
   </div>
@@ -63,47 +63,44 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { User, Lock, Message } from "@element-plus/icons-vue";
-// import { RegisterMember } from '@/api/user/type'
-// import { reqAddMember } from '@/api/user'
-import { ElMessage } from "element-plus";
-import AuthCaptcha from "./AuthCaptcha.vue";
-// import { ResponseData } from '@/api/type'
+import Captcha from "@/components/captcha/Captcha.vue";
 
-import { useRouter } from "vue-router";
-// import TimeSelect from '@/components/Buy/BuyCheck/src/timeSelect.vue'
+import { RegisterRequest } from "@/types/auth";
+import { useAuthStore } from "@/stores/auth";
 
-let $router = useRouter();
+const authStore = useAuthStore();
 
-const save = async () => {};
+const save = async () => {
+  await authStore.register(registerRequest.value);
+};
 
-export interface RegisterMember {
-  verifyCode: string;
-  name: string;
-  account: string;
-  password: string;
-  passwordCheck: string;
-  phone: string;
-}
-
-const registerMember = ref<RegisterMember>({
+const registerRequest = ref<RegisterRequest>({
   name: "jjj",
-  account: "ruby028016@gmail.com",
-  phone: "123456789",
+  email: "ruby028016@gmail.com",
   password: "password",
-  passwordCheck: "password",
-  verifyCode: "",
+  password_confirmation: "password",
+  captcha_key: "",
+  captcha: "",
+  phone: "123456789",
 });
 </script>
 
 <style lang="scss" scoped>
 @use "@/styles/form.scss" as form;
-.register-member {
+.auth-register-member-rorm {
   display: flex;
   // align-items:center;
   justify-content: center;
   flex-direction: column;
   margin-bottom: 20px;
-  .table-title {
+  width: 100%;
+  max-width: 500px;
+  padding: 30px;
+
+  @include respond(md) {
+    padding: 20px;
+  }
+  .auth-register-member-rorm__title {
     margin: 20px auto;
     vertical-align: middle;
     font-size: 36px;

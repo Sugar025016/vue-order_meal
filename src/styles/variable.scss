@@ -14,7 +14,7 @@ $color-light: #fca55e;
   --color-order-handle: #{$color-order-handle};
   --color-order-finish: #{$color-order-finish};
 
-  --el-color-primary-rgb:#fd7e14;
+  --el-color-primary-rgb:#ff7606;
   --el-color-primary:#fd7e14;
   --el-color-primary-light-3:#fc8f36;
   --el-color-primary-light-5:#fca55e;
@@ -22,6 +22,8 @@ $color-light: #fca55e;
   --el-color-primary-light-8:#ffd7b6;
   --el-color-primary-light-9:#fce2cc;
   --el-color-primary-dark-2:#e27924;
+
+  --responsive-padding: clamp(10px, calc(5vw - 10px), 60px);
 }
 $color-high: #ff4800;
 $color: #fd7e14;
@@ -44,28 +46,28 @@ $base-menu-width: 200px;
 
 
 
-div {
+// div {
 
-  caret-color: transparent;
-}
+//   caret-color: transparent;
+// }
 
-input {
-  caret-color: rgb(0, 0, 0);
+// input {
+//   caret-color: rgb(0, 0, 0);
 
-}
+// }
 
-.change {
-  color: $color;
-  cursor: pointer;
-  outline: none;
-  caret-color: transparent;
-  // caret-color: none;
-}
+// .change {
+//   color: $color;
+//   cursor: pointer;
+//   outline: none;
+//   caret-color: transparent;
+//   // caret-color: none;
+// }
 
 
-.change:hover {
-  color: black;
-}
+// .change:hover {
+//   color: black;
+// }
 
 .icon {
   width: 30px;
@@ -75,10 +77,10 @@ input {
 
 
 
-.border {
-  border: 1px solid #dad8d8;
-}
+// .border {
+//   border: 1px solid #dad8d8;
+// }
 
-.border:hover {
-  border: 1px solid $color;
-}
+// .border:hover {
+//   border: 1px solid $color;
+// }

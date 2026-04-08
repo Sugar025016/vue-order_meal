@@ -1,3 +1,16 @@
 {
-  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"]
+  "recommendations": ["Vue.volar", "Vue.vscode-typescript-vue-plugin"],
+  // "editor.formatOnSave": true,
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "typescript.suggest.paths": false,
+  "javascript.suggest.paths": false,
+  // "vetur.validation.template": false,   // 關閉 Vetur template 驗證
+  // "volar.takeOverMode.enabled": true,   // Volar 接管 TS/JS
+  // "editor.formatOnSave": true,          // 自動格式化
+  "prettier.singleQuote": true,         // Prettier 設定
+  "prettier.semi": false,
+  "prettier.tabWidth": 2,
+  //   "semi": false,
+  // "singleQuote": true,
+  // "vueIndentScriptAndStyle": true
 }

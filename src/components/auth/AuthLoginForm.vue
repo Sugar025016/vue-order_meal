@@ -1,14 +1,14 @@
 <template>
-  <div class="login_container">
-    <el-card class="login_form">
+  <div class="auth-login-form">
+    <el-card class="auth-login-form__card">
       <h3>會員登入</h3>
 
       <el-form label-position="top" ref="loginForms">
-        <el-form-item prop="username" label="帳號(信箱)：">
+        <el-form-item prop="email" label="帳號(信箱)：">
           <el-input
             clearable
             :prefix-icon="User"
-            v-model="loginForm.username"
+            v-model="loginForm.email"
             placeholder="請輸入帳號"
             size="large"
           ></el-input>
@@ -24,13 +24,13 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="驗證碼："
           prop="verifyCode"
           class="custom-form-item"
         >
-          <AuthCaptcha ref="captchaRef"></AuthCaptcha>
-        </el-form-item>
+          <Captcha ref="captchaRef"></Captcha>
+        </el-form-item> -->
         <el-form-item prop="rememberMe">
           <el-checkbox
             class="custom-checkbox"
@@ -41,7 +41,13 @@
         </el-form-item>
       </el-form>
       <el-form-item>
-        <el-button class="login_btn" type="primary" size="default" round>
+        <el-button
+          class="auth-login-form__login-btn"
+          type="primary"
+          size="default"
+          @click="handleLogin"
+          round
+        >
           登入
         </el-button>
         <!-- <el-button type="primary" round>Primary</el-button> -->
@@ -62,21 +68,56 @@
 </template>
 <script setup lang="ts">
 import { User, Lock } from "@element-plus/icons-vue";
-import AuthCaptcha from "./AuthCaptcha.vue";
-import { reactive } from "vue";
 
+import { reactive, ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
+import { LoginRequest } from "@/types/auth";
+import { useRouter } from "vue-router";
+// import router from "@/router";
+let $router = useRouter();
+const authStore = useAuthStore();
+const userStore = useUserStore();
 const loginForm = reactive({
-  username: "admin@example.com",
+  email: "ruby028016@gmail.com",
   password: "password",
   verifyCode: "",
   rememberMe: true,
 });
+
+const loading = ref(false);
+const error = ref<string | null>(null);
+
+const handleLogin = async () => {
+  loading.value = true;
+  error.value = null;
+
+  const params: LoginRequest = {
+    email: loginForm.email,
+    password: loginForm.password,
+  };
+
+  try {
+    const isLogin = await authStore.login(params);
+    console.log("isLogin:", isLogin);
+    if (isLogin) {
+      alert(`歡迎回來，${userStore.user?.name}！`);
+      $router.push("/");
+    } else {
+      error.value = "登入失敗，請確認帳號密碼";
+    }
+  } catch (err: any) {
+    error.value = err.response?.data?.message || "登入失敗";
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <style lang="scss" scoped>
 @use "@/styles/form.scss" as form;
 
-.login_container {
+.auth-login-form {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,22 +131,11 @@ const loginForm = reactive({
     border-radius: 40px;
     width: 100%;
   }
-  .login_form {
+  .auth-login-form__card {
     position: relative;
     padding: 10px;
     background: transparent;
     width: 100%;
-
-    h1 {
-      background: $color;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 40px;
-      text-align: center;
-      font-weight: 700;
-      margin-bottom: 40px;
-      margin-top: -10px;
-    }
 
     h3 {
       font-size: 36px;
@@ -115,7 +145,7 @@ const loginForm = reactive({
       margin-top: -10px;
       color: rgb(87, 87, 87);
     }
-    .login_btn {
+    .auth-login-form__login-btn {
       width: 100%;
     }
     button {
@@ -130,7 +160,6 @@ const loginForm = reactive({
         width: 100%;
         text-decoration: none;
         color: $color;
-
         margin: 1px;
       }
     }
@@ -145,8 +174,5 @@ const loginForm = reactive({
 }
 .el-card {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-:deep(.el-input-group__append, .el-input-group__prepend) {
-  padding: 0;
 }
 </style>
