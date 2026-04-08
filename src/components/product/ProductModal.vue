@@ -9,20 +9,20 @@
       :lock-scroll="false"
     >
       <img
-        :src="product.image_path"
+        :src="product?.image_path"
         alt="Flowers in Chania"
         class="product-modal__img"
       />
       <div class="product-modal__body">
-        <h1>{{ product.name }}</h1>
+        <h1>{{ product?.name }}</h1>
         <span
-          v-if="product.description != null"
+          v-if="product?.description != null"
           class="product-modal__body-description"
-          >{{ product.description }}
+          >{{ product?.description }}
         </span>
         <hr class="product-modal__body-divider" />
         <div class="product-modal__body-list">
-          <div class="product-modal__body-input" v-if="false">
+          <!-- <div class="product-modal__body-input" v-if="false">
             <label for="orderUsername">訂購人:</label>
             <input
               id="orderUsername"
@@ -30,7 +30,7 @@
               placeholder="输入文本"
               v-model="product.orderUsername"
             />
-          </div>
+          </div> -->
           <div class="product-modal__body-input">
             <label for="remark">備註:</label>
             <textarea
@@ -66,7 +66,7 @@
               <el-icon><Plus /></el-icon>
             </el-button>
             <span class="fs-5">
-              總額：${{ addCartRequest.qty * product.price }}
+              總額：${{ addCartRequest.qty * (product?.price || 0) }}
             </span>
           </div>
           <el-button
@@ -88,15 +88,16 @@
 import { ref } from "vue";
 import { Plus, Minus } from "@element-plus/icons-vue";
 import { useCartShopStore } from "@/stores/cart";
-import type { CartShop, AddCartRequest } from "@/types/cart";
+import type { AddCartRequest } from "@/types/cart";
 import { Product } from "@/types/product";
 
 const cartShopStore = useCartShopStore();
 
-const props = defineProps<{ product: Product }>();
+// const props = defineProps<{ product: Product }>();
 const product = ref<Product | null>(null);
 
 const addCartRequest = ref<AddCartRequest>({
+  
   product_id: 0,
   shop_id: 0,
   qty: 1,

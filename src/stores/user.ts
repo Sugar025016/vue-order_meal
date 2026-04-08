@@ -15,8 +15,6 @@ export const useUserStore = defineStore("user", () => {
   const email = ref<string | null>(null);
   const token = ref<string | null>(localStorage.getItem("token"));
   const hasToken = computed(() => !!token.value);
-  const addressStore = useAddressStore();
-  const router = useRouter();
   // let favoriteShopIds = computed(() => user.value?.favoriteShopIds ?? []);
   // ✅ 取得使用者資料
   const getUser = async (): Promise<boolean> => {

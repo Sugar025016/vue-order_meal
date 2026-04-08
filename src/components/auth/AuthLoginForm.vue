@@ -68,7 +68,6 @@
 </template>
 <script setup lang="ts">
 import { User, Lock } from "@element-plus/icons-vue";
-import Captcha from "@/components/captcha/Captcha.vue";
 
 import { reactive, ref } from "vue";
 import { useAuthStore } from "@/stores/auth";
@@ -86,8 +85,6 @@ const loginForm = reactive({
   rememberMe: true,
 });
 
-const email = ref("");
-const password = ref("");
 const loading = ref(false);
 const error = ref<string | null>(null);
 
@@ -102,6 +99,7 @@ const handleLogin = async () => {
 
   try {
     const isLogin = await authStore.login(params);
+    console.log("isLogin:", isLogin);
     if (isLogin) {
       alert(`歡迎回來，${userStore.user?.name}！`);
       $router.push("/");

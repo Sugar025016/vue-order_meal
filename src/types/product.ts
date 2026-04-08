@@ -13,7 +13,7 @@ export interface Product {
   description: string
   price: number
   is_orderable: boolean
-  image_path: string | null
+  image_path: string 
   shop_id: number
   deleted_at: string | null
 }

@@ -7,7 +7,6 @@
 </template>
 <script setup lang="ts">
 
-let title = document.title;
 </script>
 
 <style lang="scss" scoped>

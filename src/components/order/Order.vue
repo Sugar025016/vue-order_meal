@@ -183,27 +183,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-
-import { useShopStore } from "@/stores/shop";
 
 import { LocationOutline } from "@vicons/ionicons5";
 
 import { CallConnecting20Regular } from "@vicons/fluent";
-import { useUserStore } from "@/stores/user";
-import { getNowWeekMinutes } from "@/utils/time";
 import { useOrderStore } from "@/stores/order";
 
-import type { TimelineItemProps } from "element-plus";
-import { PayMethod, PayMethodText } from "@/enums/PayMethod";
+import { PayMethodText } from "@/enums/PayMethod";
 
-const shopStore = useShopStore();
 const route = useRoute();
 
-interface ActivityType extends Partial<TimelineItemProps> {
-  content: string;
-}
 const baseTimeline = [
   { status: 1, text: "訂單已建立" },
   { status: 2, text: "訂單已確認" },
@@ -230,12 +221,7 @@ const timeline = computed(() => {
     };
   });
 });
-const nowMinutes = getNowWeekMinutes();
-
-const userStore = useUserStore();
 const orderStore = useOrderStore();
-
-const favoriteMap = ref<Record<number, boolean>>({});
 
 const weekNames = [
   "星期一",

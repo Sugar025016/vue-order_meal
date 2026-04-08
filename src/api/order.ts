@@ -1,7 +1,6 @@
-import type { AddOrderRequest, Order, OrderHistory } from "@/types/order";
+import type { AddOrderRequest, Order } from "@/types/order";
 import type { ApiResponse, Paginated } from "@/types/response";
 import request from "./request";
-import { OrderStatus } from "@/enums/OrderStatus";
 
 enum API {
   ORDERS_URL = "/orders",
@@ -18,9 +17,7 @@ export const addOrderApi = (cartShopId: number, data: AddOrderRequest) =>
   request.post<any, ApiResponse<any>>(`${API.ORDERS_URL}/${cartShopId}`, data);
 
 export const getOrderApi = (orderNumber: string) =>
-  request.get<any, ApiResponse<Order>>(
-    `${API.ORDERS_URL}/${orderNumber}`,
-  );
+  request.get<any, ApiResponse<Order>>(`${API.ORDERS_URL}/${orderNumber}`);
 
 export const getOrderActiveApi = () =>
   request.get<any, ApiResponse<any>>(API.ACTIVE_URL);

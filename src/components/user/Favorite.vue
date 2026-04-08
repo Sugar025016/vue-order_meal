@@ -15,7 +15,6 @@ import { useUserStore } from "@/stores/user";
 import { onMounted, ref, watch } from "vue";
 
 const shops = ref<Shop[]>([]);
-const show = ref<boolean>(true);
 const userStore = useUserStore();
 
 const getFavorites = async () => {

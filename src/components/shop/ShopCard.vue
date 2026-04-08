@@ -38,8 +38,6 @@
 import { useRouter } from "vue-router";
 import { Shop } from "@/types/shop";
 import ShopFavorite from "./ShopFavorite.vue";
-import { useShopSchedule } from "@/composables/useShopSchedule";
-import { computed } from "vue";
 
 const props = defineProps<{
   shop: Shop;

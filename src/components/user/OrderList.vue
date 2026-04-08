@@ -29,11 +29,8 @@
 <script setup lang="ts">
 import { useOrderStore } from "@/stores/order";
 // import { Order } from "@/types/order";
-import { Paginated } from "@/types/response";
-import { ElMessage } from "element-plus";
 
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { getOrderHistoryApi } from "@/api/order";
+import {  onMounted, ref } from "vue";
 import OrderCard from "@/components/order/OrderCard.vue";
 const orderStore = useOrderStore();
 

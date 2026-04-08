@@ -27,7 +27,6 @@ import {
 } from "@/composables/useShopSchedule";
 import { useOrderStore } from "@/stores/order";
 import { storeToRefs } from "pinia";
-import { Console } from "console";
 
 const cartShopStore = useCartShopStore();
 const addressStore = useAddressStore();

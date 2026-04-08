@@ -48,7 +48,6 @@ onMounted(() => {
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { ElMessage } from "element-plus";
-import SellOrderModal from "./sellOrderModal/index.vue";
 import { Shop, ArrowDown } from "@element-plus/icons-vue";
 // Props
 const props = defineProps({

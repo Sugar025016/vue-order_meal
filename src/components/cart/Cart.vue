@@ -101,7 +101,7 @@
 import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useCartShopStore } from "@/stores/cart";
-import { DeleteFilled, Plus } from "@element-plus/icons-vue";
+import { DeleteFilled } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 
 const $route = useRoute();

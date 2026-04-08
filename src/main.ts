@@ -22,3 +22,8 @@ app.use(ElementPlus, { locale: zhTw  }); // 使用 Element Plus 並設置中文�
 
 
 app.mount("#app");
+
+const firstLoading = document.getElementById("first-loading");
+if (firstLoading) {
+  firstLoading.remove();
+}

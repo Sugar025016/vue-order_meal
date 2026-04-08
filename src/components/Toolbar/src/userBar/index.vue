@@ -43,14 +43,19 @@
         }}
       </span>
     </el-link>
-    <router-link :to="'/user/order'" class="link" v-if="userStore.user?.name">
+    <router-link
+      :to="{
+        path: '/user/order',
+        query: { status: `${Date.now()}` },
+      }"
+      class="link"
+      v-if="userStore.user?.name"
+    >
       <el-icon class="icon order" v-if="userStore.user?.name"
         ><Document class="svg-icon"
       /></el-icon>
       <span class="user-bar__count order-count">
-        {{
-          orderStore?.ordersCount == null ? 0 : orderStore?.ordersCount
-        }}
+        {{ orderStore?.ordersCount == null ? 0 : orderStore?.ordersCount }}
       </span>
     </router-link>
 
@@ -82,7 +87,7 @@
 import CartDrawer from "@/components/cart/CartDrawer.vue";
 
 import { ArrowDown } from "@element-plus/icons-vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import {
   User as UserIcon,
@@ -98,9 +103,6 @@ import { useOrderStore } from "@/stores/order";
 const addressStore = useAddressStore();
 const orderStore = useOrderStore();
 let $router = useRouter();
-let $route = useRoute();
-let sellOrderModalOpen = ref(false);
-let memberModelOpen = ref(false);
 
 const cartDrawerRef = ref<InstanceType<typeof CartDrawer> | null>(null);
 function openCartDrawer() {
@@ -113,10 +115,6 @@ const userStore = useUserStore();
 
 const chooseAddressRef = ref<typeof ChooseAddressModel>();
 
-const path = window.location.hash;
-// $router.getRoutes()
-
-const pickupMode = ref(true);
 
 const props = defineProps({
   isToolbarVisibleAll: Boolean,
@@ -128,8 +126,14 @@ const logout = async () => {
 
 const changeLink = async (to: string) => {
   // $router.push('/BuyMember/' + path + '/' + page)
-  $router.push(to);
+  // $router.push(to);
+  $router.push({
+    path: `${to}`,
+    query: { t: Date.now() }, // 每次都不一樣，保證觸發路由更新
+  });
 };
+
+
 const chooseAddressOpen = async () => {
   chooseAddressRef.value?.open();
 };

@@ -7,7 +7,18 @@
       </span>
       <span class="product-card__price">{{ product.price }}$</span>
     </div>
-    <img :src="product.image_path" v-if="product.image_path" alt="AA" />
+    <!-- <img :src="product.image_path" v-if="product.image_path" alt="AA" loading="lazy" /> -->
+    <el-image :src="product.image_path" show-progress>
+      <template #viewer-error="{ activeIndex, src }">
+        <div class="image-slot viewer-error">
+          <el-icon><icon-picture /></el-icon>
+          <span>
+            this is viewer-error slot. current index: {{ activeIndex }}. src:
+            {{ src }}
+          </span>
+        </div>
+      </template>
+    </el-image>
   </div>
 </template>
 <script setup lang="ts">
@@ -30,7 +41,7 @@ defineProps(["product"]);
     flex-direction: column;
     flex-wrap: wrap;
     margin: 20px;
-    width: 100%;
+    // width: 100%;
     align-content: space-between;
     gap: 10px;
     span {
@@ -51,10 +62,10 @@ defineProps(["product"]);
       min-height: 48px;
     }
   }
-  img {
+  .el-image {
     border-radius: 0 10px 10px 0;
     height: auto;
-    width: 250px;
+    // width: 200px;
   }
 }
 .product-card:hover {

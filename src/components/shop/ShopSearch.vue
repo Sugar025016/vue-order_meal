@@ -94,7 +94,6 @@ import { computed, onMounted, ref } from "vue";
 import address from "@/utils/address.js";
 import { getCategory } from "@/api/category";
 import type { Categories } from "@/types/category";
-import type { ShopSearchRequest } from "@/types/shop";
 
 import { useShopStore } from "@/stores/shop";
 import { useAddressStore } from "@/stores/address";

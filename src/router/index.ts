@@ -11,6 +11,9 @@ import CartView from "@/views/CartView.vue";
 import UserTabsView from "@/views/UserTabsView.vue";
 import CheckoutView from "@/views/CheckoutView.vue";
 import OrderView from "@/views/OrderView.vue";
+import { ref } from "vue";
+import { useLoadingStore } from "@/stores/loading";
+import { ElLoading } from "element-plus";
 
 const routes = [
   {
@@ -37,7 +40,35 @@ const routes = [
   },
 ];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      // 返回上一頁時保持 scroll 位置
+      return savedPosition;
+    } else {
+      // 新頁面一律滾動到頂部
+      return { top: 0, behavior: "smooth" };
+    }
+  },
 });
+let loadingInstance: any = null;
+router.beforeEach((to, from, next) => {
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: "載入中...",
+    background: "rgba(0, 0, 0, 0.3)",
+  });
+
+  next();
+});
+
+router.afterEach(() => {
+  loadingInstance?.close();
+  // setTimeout(() => {
+  //   loadingInstance?.close();
+  // }, 1000);
+});
+
+export default router;

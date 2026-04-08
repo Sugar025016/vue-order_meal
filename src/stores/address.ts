@@ -2,15 +2,11 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import {
   getAddressesApi,
-  getAddressApi,
   deleteAddressApi,
-  addAddressApi,
-  updateAddressApi,
   createOrUpdateAddressApi,
   setCurrentAddressApi,
 } from "@/api/address";
 import { AddressRequest, Address } from "@/types/address";
-import { useAuthStore } from "@/stores/auth";
 import { useShopStore } from "@/stores/shop";
 import { ElMessage } from "element-plus";
 import { emptyAddress } from "@/constants/emptyAddress";

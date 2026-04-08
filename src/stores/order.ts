@@ -11,7 +11,7 @@ import {
 
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
-import { AddOrderRequest, Order, OrderHistory } from "@/types/order";
+import { AddOrderRequest, Order } from "@/types/order";
 import { emptyOrder } from "@/constants/emptyOrder";
 import { Paginated } from "@/types/response";
 
@@ -78,7 +78,7 @@ export const useOrderStore = defineStore("order", () => {
       loading.value = false;
     }
   };
-  
+
   const getOrderHistory = async (page = 1, per_page = 20) => {
     loading.value = true;
     try {

@@ -81,6 +81,7 @@ const registerRequest = ref<RegisterRequest>({
   password_confirmation: "password",
   captcha_key: "",
   captcha: "",
+  phone: "123456789",
 });
 </script>
 

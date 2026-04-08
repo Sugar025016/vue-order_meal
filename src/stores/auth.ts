@@ -10,8 +10,11 @@ import {
   verifyPasswordApi,
   changePasswordApi,
 } from "@/api/auth";
-import { type LoginRequest, PwdChangeRequest, RegisterRequest } from "@/types/auth";
-import { type User } from "@/types/user";
+import {
+  type LoginRequest,
+  PwdChangeRequest,
+  RegisterRequest,
+} from "@/types/auth";
 import { useAddressStore } from "./address";
 import { useUserStore } from "./user";
 
@@ -28,7 +31,7 @@ export const useAuthStore = defineStore("auth", () => {
   const router = useRouter();
 
   // 登入方法
-  const login = async (params: LoginRequest): Promise<User | null> => {
+  const login = async (params: LoginRequest) => {
     loading.value = true;
     error.value = null;
     try {
@@ -36,11 +39,12 @@ export const useAuthStore = defineStore("auth", () => {
       token.value = res.data?.token ?? null;
       // ✅ 存 token 到 localStorage
 
-      console.log("token:", token.value);
+      console.log("token----:", token.value);
       email.value = params.email;
       if (token.value) {
         localStorage.setItem("token", token.value);
-        return await userStore.getUser();
+        userStore.getUser();
+        return true;
       }
       return null;
     } catch (err: any) {
@@ -124,7 +128,7 @@ export const useAuthStore = defineStore("auth", () => {
 
       if (token.value) {
         localStorage.setItem("token", token.value);
-         await userStore.getUser();
+        await userStore.getUser();
         return null;
       }
 
@@ -172,9 +176,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const changePassword = async (
-    pwdChangeRequest: PwdChangeRequest
-  ) => {
+  const changePassword = async (pwdChangeRequest: PwdChangeRequest) => {
     loading.value = true;
     error.value = "";
     try {

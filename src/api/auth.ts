@@ -1,16 +1,14 @@
 import request from "./request";
 import type { ApiResponse } from "@/types/response";
 import type {
-  User,
   LoginRequest,
   LoginResponseData,
   RegisterRequest,
   RegisterUserData,
-  VerifyOtpRequest,
   PwdChangeRequest,
 } from "@/types/auth";
+import type { User } from "@/types/user";
 
-// Reuse User type from "@/types/user"
 
 export interface LoginResponse {
   token: string;

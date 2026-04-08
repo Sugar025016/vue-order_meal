@@ -1,76 +1,73 @@
 <script setup lang="ts">
-import { nextTick, reactive, ref } from 'vue'
-import { Address } from '@/types/address'
+import { nextTick, reactive, ref } from "vue";
+import { Address } from "@/types/address";
 
-import address from '@/utils/address.js'
-// import { reqAddUserAddresses } from '@/api/user'
-import { ElMessage } from 'element-plus'
-// import { AddressResponseData } from '@/types/user'
-import { useUserStore } from '@/stores/user'
+import address from "@/utils/address.js";
 
-const addAddressModalOpen = ref<boolean>(false)
+const addAddressModalOpen = ref<boolean>(false);
 const handleClose = () => {
-  addAddressModalOpen.value = false
-}
+  addAddressModalOpen.value = false;
+};
 
-let userStore = useUserStore()
-const formSize = ref('default')
+const formSize = ref("default");
 
 const changeCity = () => {
-  addressData.area = ''
-  addressData.street = ''
-}
+  addressData.area = "";
+  addressData.street = "";
+};
 
 const changeArea = () => {
-  addressData.street = ''
-}
+  addressData.street = "";
+};
 
 const validatorShopAddressDetail = (rule: any, value: any, callBack: any) => {
   if (value.trim().length <= 255) {
-    callBack()
+    callBack();
   } else {
-    callBack(new Error('地址不可超過255個字'))
+    callBack(new Error("地址不可超過255個字"));
   }
-}
+};
 const validateNotEmptyString = (rule: any, value: any, callback: any) => {
-  if (value.trim() === '') {
-    callback(new Error('請輸入地址'))
+  if (value.trim() === "") {
+    callback(new Error("請輸入地址"));
   } else {
-    callback()
+    callback();
   }
-}
+};
 const addressRules = {
-  city: [{ required: true, message: '請選擇城市', trigger: 'blur' }],
-  area: [{ required: true, message: '請選擇區域', trigger: 'blur' }],
-  street: [{ required: true, message: '請選擇街道', trigger: 'blur' }],
+  city: [{ required: true, message: "請選擇城市", trigger: "blur" }],
+  area: [{ required: true, message: "請選擇區域", trigger: "blur" }],
+  street: [{ required: true, message: "請選擇街道", trigger: "blur" }],
   detail: [
     {
       required: true,
-      message: 'Detail cannot be empty',
-      trigger: 'blur',
+      message: "Detail cannot be empty",
+      trigger: "blur",
       validator: validatorShopAddressDetail,
     },
     {
       validator: validateNotEmptyString,
-      trigger: 'blur',
-      message: '請輸入外送地址',
+      trigger: "blur",
+      message: "請輸入外送地址",
     },
   ],
-}
+};
 
-let formRef = ref<any>()
+let formRef = ref<any>();
 
 let addressData = reactive<Address>({
-  city: '',
-  area: '',
-  street: '',
-  detail: '',
-  lat: undefined,
-  lng: undefined,
-})
-const emits = defineEmits(['childClosed'])
+  city: "",
+  area: "",
+  street: "",
+  detail: "",
+  lat: 0,
+  lng: 0,
+  id: 0,
+  user_id: 0,
+});
+const emits = defineEmits(["childClosed"]);
 const saveAddress = async () => {
-  await formRef.value.validate()
+  await formRef.value.validate();
   // let res: AddressResponseData = await reqAddUserAddresses(addressData)
   // if (res.status === 200) {
   //   await userStore.userInfo()
@@ -81,46 +78,46 @@ const saveAddress = async () => {
   //     message: '搜尋失败',
   //   })
   // }
-}
+};
 
 const addShop = () => {
-  addAddressModalOpen.value = true
+  addAddressModalOpen.value = true;
 
   Object.assign(addressData, {
-    city: '',
-    area: '',
-    street: '',
-    detail: '',
-  })
-  title.value = '新增外送地址'
+    city: "",
+    area: "",
+    street: "",
+    detail: "",
+  });
+  title.value = "新增外送地址";
   nextTick(() => {
-    formRef.value.clearValidate('city')
-    formRef.value.clearValidate('area')
-    formRef.value.clearValidate('street')
-    formRef.value.clearValidate('detail')
-  })
-}
+    formRef.value.clearValidate("city");
+    formRef.value.clearValidate("area");
+    formRef.value.clearValidate("street");
+    formRef.value.clearValidate("detail");
+  });
+};
 
 const updateShop = (address: Address) => {
-  addAddressModalOpen.value = true
+  addAddressModalOpen.value = true;
 
-  title.value = '更改地址'
-  Object.assign(addressData, address)
+  title.value = "更改地址";
+  Object.assign(addressData, address);
 
   nextTick(() => {
-    formRef.value.clearValidate('city')
-    formRef.value.clearValidate('area')
-    formRef.value.clearValidate('street')
-    formRef.value.clearValidate('detail')
-  })
-}
-const title = ref<string>()
+    formRef.value.clearValidate("city");
+    formRef.value.clearValidate("area");
+    formRef.value.clearValidate("street");
+    formRef.value.clearValidate("detail");
+  });
+};
+const title = ref<string>();
 
 defineExpose({
   updateShop,
   addShop,
   handleClose,
-})
+});
 </script>
 <template>
   <div class="dialog">

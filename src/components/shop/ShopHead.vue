@@ -1,5 +1,5 @@
 <template>
-  <div class="shop-head">
+  <div class="shop-head" v-if="shopStore.shop">
     <el-card>
       <div class="shop-head__title">
         <span class="shop-head__title-span"
@@ -44,7 +44,7 @@
               >
             </template>
 
-            <template v-else>
+            <template v-else-if="nextSchedule !== null">
               <!-- <span>非營業日</span> -->
               <span>開始營業時間：</span>
               <span

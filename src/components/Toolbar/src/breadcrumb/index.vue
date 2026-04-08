@@ -47,18 +47,15 @@
 </template>
 <script setup lang="ts">
 // import useLayOutSettingStore from '@/store/modules/setting'
-import { ArrowRight, Fold, Expand } from "@element-plus/icons-vue";
+import { ArrowRight } from "@element-plus/icons-vue";
 // import { isBreakpointMD } from '@/utils/windowSize'
 // let LayOutSettingStore = useLayOutSettingStore()
 
 import { useRoute } from "vue-router";
-import { ref } from "vue";
 
 let $route = useRoute();
 
-const paths = $route.path.split("/");
 
-let isSell: boolean = paths.includes("sell");
 
 const changeIcon = () => {
   // LayOutSettingStore.isCollapse = !LayOutSettingStore.isCollapse

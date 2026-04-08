@@ -16,7 +16,6 @@
               v-model="addressId"
               class="radio"
               v-for="address in addressStore.addresses"
-              @change="changeRedis(addressId)"
             >
               <el-radio :label="address.id" size="large">
                 {{
@@ -92,11 +91,10 @@ import { ref } from "vue";
 import { ElMessage } from "element-plus";
 
 import EditAddressModal from "@/components/Toolbar/src/toolbarChooseAddress/editAddressModal.vue";
-import { Plus, EditPen, Delete, CaretTop } from "@element-plus/icons-vue";
+import { Plus, EditPen, Delete } from "@element-plus/icons-vue";
 import { useAddressStore } from "@/stores/address";
 
 import { ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
 import { Address } from "@/types/address";
 
 const addressStore = useAddressStore();
@@ -105,7 +103,6 @@ const addresses = ref<Address[]>([]);
 
 const addressId = ref<number>(0);
 
-let $router = useRouter();
 
 const chooseAddressModelOpen = ref<boolean>(false);
 
@@ -144,7 +141,6 @@ const deleteAddress = async (address: any) => {
   console.log("success:", success);
   if (success) {
     if (addressStore.currentAddress?.id === address.id) {
-      addressStore.currentAddress = null;
       addressId.value = 0;
       console.log("刪除的地址是目前選擇的地址，已清除目前地址");
       console.log("addressId.value:", addressId.value);
@@ -175,9 +171,8 @@ const checkAddress = async () => {
     await setCurrentAddress();
   }
 };
-function degreesToRadians(degrees: number): number {
-  return (degrees * Math.PI) / 180;
-}
+
+
 
 // function calculateDistance(
 //   lat1: number,
@@ -235,7 +230,6 @@ const handleClose = () => {
   chooseAddressModelOpen.value = false;
 };
 
-const changeRedis = (addressId: number) => {};
 
 const addressRefs = ref<typeof EditAddressModal>();
 const handleChildClosed = () => {

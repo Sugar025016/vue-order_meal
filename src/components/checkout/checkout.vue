@@ -10,14 +10,14 @@
     <div class="checkout__body">
       <el-row :gutter="20">
         <div class="el-col">
-          {{
+          <!-- {{
             orderDate && orderTime
               ? "預約時間：" + addOrderRequest.scheduled_time
               : ""
           }}
           {{ addOrderRequest.scheduled_time }}
           {{ orderDate }}
-          {{ selectedDateTime }}
+          {{ selectedDateTime }} -->
           <div class="order_check date-time-item">
             <span v-if="orderStore.deliveryType === 1">外送時間：</span>
 
@@ -147,14 +147,12 @@
 import { ref, onMounted, onBeforeUnmount, computed, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
-import { useUserStore } from "@/stores/user";
 import TimeSelect from "./timeSelect.vue";
 
 import { useCartShopStore } from "@/stores/cart";
 import { useAddressStore } from "@/stores/address";
 import ChooseAddressModel from "@/components/Toolbar/src/toolbarChooseAddress/index.vue";
 import { AddOrderRequest } from "@/types/order";
-import { addOrderApi } from "@/api/order";
 import { useOrderStore } from "@/stores/order";
 import { calcDistanceKm } from "@/composables/useShopSchedule";
 import { ElMessageBox } from "element-plus";
@@ -175,7 +173,6 @@ const addressStore = useAddressStore();
 
 const chooseAddressRef = ref<typeof ChooseAddressModel>();
 const router = useRouter();
-const userStore = useUserStore();
 const orderStore = useOrderStore();
 const sum = computed(() => {
   return (cartShopStore.cartShop.cart_items ?? []).reduce(
@@ -184,9 +181,9 @@ const sum = computed(() => {
   );
 });
 
-const note = ref("");
-const payMethod = ref<1 | 2 | 3>(1);
-const is_cutlery = ref("1");
+// const note = ref("");
+// const payMethod = ref<1 | 2 | 3>(1);
+// const is_cutlery = ref("1");
 
 const startOptionDay = new Date();
 const oneWeekLater = new Date();

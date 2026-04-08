@@ -53,13 +53,12 @@
     <div class="product-tabs__tab"></div>
   </div>
 
-  <ProductModal ref="productModalRefs" ></ProductModal>
+  <ProductModal ref="productModalRefs"></ProductModal>
 </template>
 
 <script setup lang="ts">
 import ProductModal from "./ProductModal.vue";
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 
 import ProductCard from "./ProductCard.vue";
 import { useShopStore } from "@/stores/shop";
@@ -69,16 +68,12 @@ import { Product } from "@/types/product";
 const shopStore = useShopStore();
 
 const productModalRefs = ref<InstanceType<typeof ProductModal> | null>(null);
-function openPModal() {
-  productModalRefs.value?.openProduct();
-}
+// function openPModal() {
+//   productModalRefs.value?.openProduct();
+// }
 
-let money = ref();
-let productModalVisible: boolean = false;
-
-let $route = useRoute();
-
-let id: number = Number($route.params.id);
+// let money = ref();
+// let productModalVisible: boolean = false;
 
 let TabProductsData = ref<any[]>([]);
 const shop = ref<Shop>();
@@ -87,8 +82,6 @@ shop.value = shopStore.shop;
 
 TabProductsData.value = shopStore.shop?.tabs || [];
 console.log("TabProductsData", TabProductsData.value);
-
-
 
 let shopData = ref<any>({
   id: 0,
@@ -117,16 +110,6 @@ const openModal = (v: Product) => {
   // productModalRefs.value?.addAddressModalOpen.value = true;
 };
 
-const getProductsData = async (id: number) => {
-  //   let res: TabProductsResponseData = await reqGetTabProducts(id)
-  //   TabProductsData.value = res.data
-};
-
-const getShopData = async (id: number) => {
-  //   let res: ShopResponseData = await getShop(id)
-  //   shopData.value = res.data
-};
-
 const scrollToSection = (sectionId: number) => {
   const element = document.getElementById(sectionId + "");
 
@@ -135,23 +118,15 @@ const scrollToSection = (sectionId: number) => {
     const targetPosition =
       element.getBoundingClientRect().top + window.scrollY - headerHeight;
     window.scrollTo({ top: targetPosition, behavior: "smooth" });
-    shopStore.scrollTop = targetPosition;
+    // shopStore.scrollTop = targetPosition;
   }
 };
-
-const activeTab = ref(0);
 
 const myModal = document.getElementById("myModal");
 const myInput = document.getElementById("myInput");
 
 myModal?.addEventListener("shown.bs.modal", () => {
   myInput?.focus();
-});
-
-onMounted(() => {
-  // getProductsData(id);
-  // getShopData(id);
-  // TabProductsData.value = shopStore.shop?.tabs || [];
 });
 </script>
 
